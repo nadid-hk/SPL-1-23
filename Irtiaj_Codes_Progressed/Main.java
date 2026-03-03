@@ -182,36 +182,43 @@ public class Main {
 
             else if (option == 3) {
                 System.out.println("--- Update Info ---");
-                System.out.print("Enter seatID to update: ");
-                String updateID = input.nextLine().trim();
+                System.out.print("Enter class Name: ");
+                String className = input.nextLine().trim();
 
-                boolean belongsToThisSchool = false;
+                System.out.print("Enter Shift: ");
+                String shift = input.nextLine().trim().toUpperCase();
+
+                Map<Strinng, String> target = null;
                 for (Map<String, String> r : schoolInfoDB.readAll()) {
-                    if (updateID.equals(r.get("SeatID")) && loggedInEIIN.equals(r.get("EIIN"))) {
-                        belongsToThisSchool = true;
+                    if(loggedInEIIN.equals(r.get("EIIN")) &&
+                      className.equals(r.get("Class"))  &&
+                      shift.equals(r.get("shift"))  &&
+                       seatGender.equals(r.get(""SeatGender))){
+
+                        target = r;
                         break;
                     }
                 }
 
-                if (!belongsToThisSchool) {
-                    System.out.println("You cannot update this seatID (not found for your EIIN).\n");
+                if (target == null) {
+                    System.out.println("No matching record found for your EIIN with given (Class, Shift, SeatGender). \n");
                     continue;
                 }
 
                 System.out.print("Enter new totalSeatNumber: ");
                 String newSeatCount = input.nextLine().trim();
 
+                String seatID = target.get("SeatID");
                 Map<String, String> updateData = new LinkedHashMap<>();
                 updateData.put("SeatAvailable", newSeatCount);
 
-                schoolInfoDB.update("SeatID", updateID, updateData);
+                schoolInfoDB.update("SeatID", seatID, updateData);
                 System.out.println("Update completed.\n");
-            }
 
-            else if (option == 4) {
                 System.out.println("Exiting...");
                 running = false;
             }
+
 
             else {
                 System.out.println("Invalid option. Try again.\n");
