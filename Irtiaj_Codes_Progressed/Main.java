@@ -38,7 +38,7 @@ public class Main {
         // ===== MENU WORKFLOW =====
         boolean running = true;
         while (running) {
-            System.out.println("Press 1 to add info ,Press 2 to show info ,Press 3 to Update totalSeatNumber ,Press 4 to finish the process");
+            System.out.println("Press 1 to add info ,Press 2 to show info ,Press 3 to Update totalSeatNumber");
             System.out.print("Choose option: ");
 
             int option;
