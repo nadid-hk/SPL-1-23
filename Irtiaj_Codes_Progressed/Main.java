@@ -59,10 +59,10 @@ public class Main {
                 String className = input.nextLine().trim();
 
                 System.out.print("Enter shift: ");
-                String shift = input.nextLine().trim();
+                String shift = input.nextLine().trim().toUpperCase();
 
                 System.out.print("Enter seatGender: ");
-                String seatGender = input.nextLine().trim();
+                String seatGender = input.nextLine().trim().toUpperCase();
 
                 System.out.print("Enter totalSeatNumber: ");
                 String totalSeatNumber = input.nextLine().trim();
@@ -139,6 +139,9 @@ public class Main {
                     System.out.println("SeatGender: " + seatGender);
                     System.out.println("TotalSeatNumber: " + totalSeatNumber);
                     System.out.println();
+
+                    System.ouut.println("Exiting...");
+                    running = false;
                 }
             }
 
