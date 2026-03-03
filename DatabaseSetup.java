@@ -13,9 +13,11 @@ public class DatabaseSetup {
     public static FileDatabase classEligibilityDB;
     public static FileDatabase authorityLoginDB;
 
-    // Keep EMPTY (only schema/attributes)
-    public static FileDatabase applicantDB;     // ApplicantID, BirthCertNo
-    public static FileDatabase studentInfoDB;   // attributes only
+    public static FileDatabase applicantDB;     
+    public static FileDatabase studentInfoDB;   
+
+    
+    public static FileDatabase quotaChoiceDB;
 
     public static void initAndSeed() {
 
@@ -62,17 +64,8 @@ public class DatabaseSetup {
         // APPLICANT DATABASE INSERTION
         
         applicantDB = new FileDatabase(
-                "applicant.db",
-                Arrays.asList(
-                        "ApplicantID",
-                        "BirthCertNo",
-                        "SchoolAreaPostCode",
-                        "Choice1SeatID", "Choice1Quota", "Choice1RefID",
-                        "Choice2SeatID", "Choice2Quota", "Choice2RefID",
-                        "Choice3SeatID", "Choice3Quota", "Choice3RefID",
-                        "Choice4SeatID", "Choice4Quota", "Choice4RefID",
-                        "Choice5SeatID", "Choice5Quota", "Choice5RefID"
-                )
+            "applicant.db",
+            Arrays.asList("ApplicantID", "BirthCertNo", "SchoolAreaPostCode", "SubmissionTime")
         );
 
         
@@ -96,12 +89,17 @@ public class DatabaseSetup {
                 )
         );
 
+        quotaChoiceDB = new FileDatabase(
+            "quota_choice.db", 
+            Arrays.asList("ChoiceID", "ApplicantID", "SeatID", "Quota", "Preference", "RefID")
+        );
+
         seedIfEmpty(); 
     }
 
     private static void seedIfEmpty() {
 
-        //    POSTCODES DATABASE INSERTION
+        //  POSTCODES DATABASE INSERTION
         if (postcodeDB.readAll().isEmpty()) {
             insertPost("1000", "DHAKA", "DHAKA", "MOTIJHEEL");
             insertPost("1217", "DHAKA", "DHAKA", "RAMNA");
@@ -141,7 +139,7 @@ public class DatabaseSetup {
             insertNid("19785554443332221", "MD. MOSHIUR RAHMAN");
         }
 
-        // REFERENCES DATABASE INSERTION
+        // References Database Insertion
         if (referenceDB.readAll().isEmpty()) {
             insertRef("REF001", "19901234567890123");
             insertRef("REF002", "19887654321098765");
@@ -151,7 +149,7 @@ public class DatabaseSetup {
             insertRef("REF006", "19880000111122223");
         }
 
-        // BIRTH CERTIFICATE DATABASE INSERTION
+        // Birth Certificate Database Insertion
         if (birthDB.readAll().isEmpty()) {
             String[] postcodes = {"1000", "1217", "1206"};
 
@@ -173,7 +171,7 @@ public class DatabaseSetup {
             insertBirth("BC3015", "TANVIR HOSSAIN","10-10-2016", "MD. IMRAN HOSSAIN",  "MAHFUZA AKTER",      "MALE",   postcodes[2]);
         }
 
-        // SCHOOL AREAS DATABASE INSERTION
+        // School Areas Database Insertion
         if (schoolAreaDB.readAll().isEmpty()) {
             insertSchoolArea("108001", "Adamjee Cantonment School", "1206");
             insertSchoolArea("108002", "B.A.F. Shaheen College", "1206");
@@ -193,7 +191,7 @@ public class DatabaseSetup {
             insertSchoolArea("108205", "Eskaton Garden High School", "1217");
         }
 
-        // CLASS ELIGIBILITY DATABASE INSERTION
+        // Class Eligibility Database Insertion
         if (classEligibilityDB.readAll().isEmpty()) {
             insertEligibility("1", "01-01-2019", "31-12-2020");
             insertEligibility("3", "01-01-2017", "31-12-2018");
@@ -201,7 +199,7 @@ public class DatabaseSetup {
             insertEligibility("9", "01-01-2011", "31-12-2012");
         }
 
-        //  AUTHORITY LOGIN DATABASE INSERTION
+        //  Authority Login Database Insertion
         if (authorityLoginDB.readAll().isEmpty()) {
             insertAuthorityLogin("108001", "482193");
             insertAuthorityLogin("108002", "716204");
@@ -221,7 +219,7 @@ public class DatabaseSetup {
             insertAuthorityLogin("108205", "965703");
         }
 
-        // SEAT INFO DATABASE INSERTION
+        // Seat Info Database Insertion
         if (schoolInfoDB.readAll().isEmpty()) {
             addSeat("108001", 1, "MORNING", "BOTH", 60);
             addSeat("108001", 1, "DAY",     "BOTH", 55);
@@ -286,8 +284,7 @@ public class DatabaseSetup {
         
     }
 
-    /* -------------------- Insert Helpers -------------------- */
-
+    // Insert Helpers
     private static void insertBirth(String bcNo, String name, String bdate,
                                     String father, String mother, String gender, String postcode) {
         Map<String, String> r = new LinkedHashMap<>();
@@ -318,7 +315,7 @@ public class DatabaseSetup {
         schoolAreaDB.insert(r);
     }
 
-    // Generate a unique SeatID: Using random]
+    // Generate a unique SeatID: Using random
     private static void addSeat(String eiin, int classNo, String shift, String seatGender, int seatAvail) {
         // Collect all existing SeatIDs so we avoid duplicates
         Set<String> used = new HashSet<>();
@@ -326,7 +323,8 @@ public class DatabaseSetup {
             String sid = row.get("SeatID");
             if (sid != null && !sid.isEmpty()) used.add(sid);
         }
-
+        // After first insertion it will store the value in database but nothing will happen then when i again inset the value,
+        // after the set part will work then 
         // Generate a unique SeatID: S-[8 digit]
         Random rand = new Random();
         String seatId;
