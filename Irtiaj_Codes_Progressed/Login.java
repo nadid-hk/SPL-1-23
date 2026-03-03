@@ -1,4 +1,5 @@
 // Login.java
+import java.io.Console;
 import java.util.*;
 
 public class Login {
@@ -15,6 +16,12 @@ public class Login {
         System.out.print("Enter EIIN: ");
         String eiin = input.nextLine().trim();
 
+        String password = "";
+        Console console = System.console();
+
+        if(console != null){
+            char
+        }
         System.out.print("Enter Password: ");
         String password = input.nextLine().trim();
 
