@@ -120,57 +120,34 @@ public class MasterAdmin {
     }
 
 
-    private static void  deleteSchool(Scanner input){
-         System.out.println("\n--- DELETE SCHOOL ---");
+    private static void deleteSchool(Scanner input){
+    System.out.println("\n--- DELETE SCHOOL ---");
 
-        System.out.print("Enter School EIIN: ");
-        String schoolEiin = input.nextLine().trim();
-        if (schoolEiin.isEmpty()) {
-            System.out.println("Deletion is not possible without eiin.");
-            return;
-        }
-        String check=DatabaseSetup.schoolAreaDB.getValueByPrimaryKey("EIIN",schoolEiin,schoolEiin);
-        if(schoolEiin==check){
-        DatabaseSetup.schoolAreaDB.delete("EIIN",schoolEiin);
-        DatabaseSetup.schoolInfoDB.delete("EIIN",schoolEiin);
-        System.out.println("Deletion Successfully Everything");
+    System.out.print("Enter School EIIN: ");
+    String schoolEiin = input.nextLine().trim();
+
+    if (schoolEiin.isEmpty()) {
+        System.out.println("Deletion is not possible without EIIN.");
+        return;
     }
-        else{
-            System.out.println("EIIN is not found in the database.");
-        }
 
-    };
+    String check = DatabaseSetup.schoolAreaDB
+            .getValueByPrimaryKey("EIIN", schoolEiin, "EIIN");
 
+    if (schoolEiin.equals(check)) {
 
+        DatabaseSetup.schoolAreaDB.delete("EIIN", schoolEiin);
+        DatabaseSetup.schoolInfoDB.delete("EIIN", schoolEiin);
 
+        System.out.println("School deleted successfully.");
 
-
-
-
-
-
-
-
-
+    } else {
+        System.out.println("EIIN not found in database.");
+    }
+}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private static void runLottery(Scanner input){
+ private static void runLottery(Scanner input){
         LotteryDatabase initializer = new LotteryDatabase();
         initializer.initializeDatabase();
         FileDatabase quotaChoiceDB =
@@ -205,37 +182,9 @@ public class MasterAdmin {
 
         System.out.println("Lottery Completed Successfully!");
 
-        // Optional: Print results for verification
-        // System.out.println("----- Lottery Results -----");
-        // for (Map<String,String> row : resultDB.readAll()) {
-        //     System.out.println(row.get("StudentID") + " -> " + row.get("AdmittedSeatID"));
-        // }
+        
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
