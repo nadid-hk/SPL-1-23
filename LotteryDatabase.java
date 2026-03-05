@@ -55,9 +55,6 @@ public class LotteryDatabase {
         }
     }
 
-    //RESULT DB
-    
-
     private void createResultDB() {
 
         FileDatabase applicantDB =
@@ -65,11 +62,12 @@ public class LotteryDatabase {
 
         FileDatabase resultDB =
                 new FileDatabase("result.db",
-                        Arrays.asList("StudentID","AdmittedSeatID"));
+                        Arrays.asList("ApplicantID","StudentID","AdmittedSeatID"));
 
         for(Map<String,String> applicant : applicantDB.readAll()) {
 
             Map<String,String> row = new LinkedHashMap<>();
+            row.put("ApplicantID",applicant.get("ApplicantID"));
 
             // StudentID = BirthCertificateNo
             row.put("StudentID",
@@ -81,7 +79,7 @@ public class LotteryDatabase {
         }
     }
 
-    // QUOTA CHOICE EXTENDED DB (Integrated Version)
+    // Quota Choice Extended DB (Integrated Version)
 
     private void createQuotaChoiceExtendedDB() {
 
