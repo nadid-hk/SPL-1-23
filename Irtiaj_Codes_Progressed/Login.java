@@ -1,4 +1,3 @@
-// Login.java
 import java.io.Console;
 import java.util.*;
 
@@ -20,11 +19,14 @@ public class Login {
         Console console = System.console();
 
         if(console != null){
-            char
+            char[] array = console.readPassword("Enter Password: ");
+            password = new String(array).trim();
         }
-        System.out.print("Enter Password: ");
-        String password = input.nextLine().trim();
-
+        else{
+             System.out.print("Enter Password: ");
+             password = input.nextLine().trim();
+        }
+       
         // authorityLoginDB schema: EIIN, Password
         Map<String, String> user = userDB.find("EIIN", eiin);
 
