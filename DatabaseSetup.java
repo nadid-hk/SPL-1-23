@@ -529,13 +529,58 @@ insertNid("19910000000000001", "MD. KAMAL HASAN");
 
         // REFERENCES 
         if (referenceDB.readAll().isEmpty()) {
-            insertRef("REF001", "19901234567890123");
-            insertRef("REF002", "19887654321098765");
-            insertRef("REF003", "19775553331112223");
-            insertRef("REF004", "19881234123412345");
-            insertRef("REF005", "19901111222233334");
-            insertRef("REF006", "19880000111122223");
-        }
+    insertRef("REF101", "19910000000000007");
+    insertRef("REF102", "19910000000000012");
+    insertRef("REF103", "19910000000000019");
+    insertRef("REF104", "19910000000000024");
+    insertRef("REF105", "19910000000000031");
+    insertRef("REF106", "19910000000000036");
+    insertRef("REF107", "19910000000000042");
+    insertRef("REF108", "19910000000000048");
+    insertRef("REF109", "19910000000000053");
+    insertRef("REF110", "19910000000000059");
+    insertRef("REF111", "19910000000000064");
+    insertRef("REF112", "19910000000000071");
+    insertRef("REF113", "19910000000000076");
+    insertRef("REF114", "19910000000000083");
+    insertRef("REF115", "19910000000000089");
+    insertRef("REF116", "19910000000000094");
+    insertRef("REF117", "19910000000000101");
+    insertRef("REF118", "19910000000000108");
+    insertRef("REF119", "19910000000000116");
+    insertRef("REF120", "19910000000000123");
+    insertRef("REF121", "19910000000000129");
+    insertRef("REF122", "19910000000000137");
+    insertRef("REF123", "19910000000000144");
+    insertRef("REF124", "19910000000000152");
+    insertRef("REF125", "19910000000000161");
+
+    insertRef("REF126", "19920000000000004");
+    insertRef("REF127", "19920000000000009");
+    insertRef("REF128", "19920000000000015");
+    insertRef("REF129", "19920000000000021");
+    insertRef("REF130", "19920000000000027");
+    insertRef("REF131", "19920000000000033");
+    insertRef("REF132", "19920000000000038");
+    insertRef("REF133", "19920000000000044");
+    insertRef("REF134", "19920000000000049");
+    insertRef("REF135", "19920000000000055");
+    insertRef("REF136", "19920000000000062");
+    insertRef("REF137", "19920000000000068");
+    insertRef("REF138", "19920000000000073");
+    insertRef("REF139", "19920000000000079");
+    insertRef("REF140", "19920000000000084");
+    insertRef("REF141", "19920000000000091");
+    insertRef("REF142", "19920000000000097");
+    insertRef("REF143", "19920000000000103");
+    insertRef("REF144", "19920000000000110");
+    insertRef("REF145", "19920000000000118");
+    insertRef("REF146", "19920000000000124");
+    insertRef("REF147", "19920000000000131");
+    insertRef("REF148", "19920000000000139");
+    insertRef("REF149", "19920000000000146");
+    insertRef("REF150", "19920000000000154");
+}
 
         
 // BIRTH CERTIFICATE DATABASE INSERTION FROM ChatGPT
@@ -945,6 +990,7 @@ private static void insertAuthorityLogin(String eiin, String password6Digit) {
     authorityLoginDB.insert(r);
 }
 }
+
 
 
 
