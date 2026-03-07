@@ -20,7 +20,7 @@ public class DatabaseSetup {
     
     public static FileDatabase quotaChoiceDB;
 
-    private static void seedIfEmpty() {
+    private static void initAndSeed() {
 
         // Postcode
         if (postcodeDB.readAll().isEmpty()) {
@@ -868,3 +868,4 @@ private static void insertAuthorityLogin(String eiin, String password6Digit) {
     authorityLoginDB.insert(r);
 }
 }
+
