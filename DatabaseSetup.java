@@ -17,88 +17,8 @@ public class DatabaseSetup {
     public static FileDatabase applicantDB;     // ApplicantID, BirthCertNo
     public static FileDatabase studentInfoDB;   // attributes only
 
-    public static void initAndSeed() {
-
-        birthDB = new FileDatabase(
-                "birthcertificate.db",
-                Arrays.asList("BirthCertificateNo", "Name", "BirthDate", "FatherName", "MotherName", "Gender", "Postcode")
-        );
-
-        postcodeDB = new FileDatabase(
-                "postcode.db",
-                Arrays.asList("PostCode", "Division", "District", "Thana")
-        );
-
-        schoolAreaDB = new FileDatabase(
-                "schoolarea.db",
-                Arrays.asList("EIIN", "Name", "Postcode")
-        );
-
-        schoolInfoDB = new FileDatabase(
-                "seatinfo.db",
-                Arrays.asList("SeatID", "EIIN", "Class", "Shift", "SeatGender", "SeatAvailable")
-        );
-
-        nidDB = new FileDatabase(
-                "nid.db",
-                Arrays.asList("NID", "Name")
-        );
-
-        referenceDB = new FileDatabase(
-                "reference.db",
-                Arrays.asList("RefID", "NID")
-        );
-
-        classEligibilityDB = new FileDatabase(
-                "class_eligibility.db",
-                Arrays.asList("Class", "MinDate", "MaxDate")
-        );
-
-        authorityLoginDB = new FileDatabase(
-                "authority_login.db",
-                Arrays.asList("EIIN", "Password")
-        );
-
-        // Applicant DB (EMPTY): only application-specific attributes
-        // ApplicantID can repeat for same BirthCertNo (multiple applications).
-        // Student personal info is stored in student_info.db and referenced by BirthCertNo.
-        applicantDB = new FileDatabase(
-                "applicant.db",
-                Arrays.asList(
-                        "ApplicantID",
-                        "BirthCertNo",
-                        "SchoolAreaPostCode",
-                        "Choice1SeatID", "Choice1Quota", "Choice1RefID",
-                        "Choice2SeatID", "Choice2Quota", "Choice2RefID",
-                        "Choice3SeatID", "Choice3Quota", "Choice3RefID",
-                        "Choice4SeatID", "Choice4Quota", "Choice4RefID",
-                        "Choice5SeatID", "Choice5Quota", "Choice5RefID"
-                )
-        );
-
-        // Student Info DB (EMPTY): only attributes
-        studentInfoDB = new FileDatabase(
-                "student_info.db",
-                Arrays.asList(
-                        "BirthCertificateNo",
-                        "Name",
-                        "DOB",
-                        "Gender",
-                        "Religion",
-                        "MobileNo",
-                        "FatherNID",
-                        "MotherNID",
-                        "LocalGurdianNID",
-                        "AdmittedClass",
-                        "PresentAdressPostcode",
-                        "DetailedPresentAdress",
-                        "ParmanentAdressPostcode",
-                        "DetailedParmanentAdress"
-                )
-        );
-
-        seedIfEmpty(); // Seeds all other DBs only
-    }
+    
+    public static FileDatabase quotaChoiceDB;
 
     private static void seedIfEmpty() {
 
@@ -948,4 +868,3 @@ private static void insertAuthorityLogin(String eiin, String password6Digit) {
     authorityLoginDB.insert(r);
 }
 }
-
