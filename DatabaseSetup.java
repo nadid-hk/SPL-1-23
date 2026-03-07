@@ -214,7 +214,7 @@ insertNid("19910000000000001", "MD. KAMAL HASAN");
     insertNid("19910000000000101", "MD. NURUL ABRAR");
     insertNid("19910000000000102", "MD. TAHER ALI");
     insertNid("19910000000000103", "MD. SHAHADAT HOSSAIN");
-    insertNid("19910000000000104", "MD. KAMRুজ্জAMAN");
+    insertNid("19910000000000104", "MD. KAMRUZZMAN");
     insertNid("19910000000000105", "MD. KUDDUS MIA");
     insertNid("19910000000000106", "MD. KHALID HOSSAIN");
     insertNid("19910000000000107", "MD. RASHIDUL ISLAM");
@@ -643,7 +643,7 @@ if (birthDB.readAll().isEmpty()) {
     insertBirth("BC3101", "AFTAB HASAN", "16-05-2018", "MD. NURUL ABRAR", "MST. TANZILA AKTER", "MALE", "1217");
     insertBirth("BC3102", "TANZILA JAHAN", "22-12-2016", "MD. TAHER ALI", "MST. MAHJABEEN JAHAN", "FEMALE", "1206");
     insertBirth("BC3103", "ARHAM AHMED", "08-04-2017", "MD. SHAHADAT HOSSAIN", "MST. MUNTAHA AKTER", "MALE", "1000");
-    insertBirth("BC3104", "RAISA AKTER", "30-09-2018", "MD. KAMRুজ্জAMAN", "MST. MASHIAT ARA", "FEMALE", "1217");
+    insertBirth("BC3104", "RAISA AKTER", "30-09-2018", "MD. KAMRUZZMAN", "MST. MASHIAT ARA", "FEMALE", "1217");
     insertBirth("BC3105", "SAAD ISLAM", "03-06-2015", "MD. KUDDUS MIA", "MST. AFSANA MIM", "MALE", "1206");
     insertBirth("BC3106", "RABIYA KHATUN", "17-02-2017", "MD. KHALID HOSSAIN", "MST. SABIHA NAWRIN", "FEMALE", "1000");
     insertBirth("BC3107", "SHAKIB HOSSAIN", "11-01-2019", "MD. RASHIDUL ISLAM", "MST. ANJUMAN ARA", "MALE", "1217");
@@ -945,5 +945,6 @@ private static void insertAuthorityLogin(String eiin, String password6Digit) {
     authorityLoginDB.insert(r);
 }
 }
+
 
 
