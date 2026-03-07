@@ -19,8 +19,85 @@ public class DatabaseSetup {
 
     
     public static FileDatabase quotaChoiceDB;
+    public static void initAndSeed() {
 
-    private static void initAndSeed() {
+        birthDB = new FileDatabase(
+                "birthcertificate.db",
+                Arrays.asList("BirthCertificateNo", "Name", "BirthDate", "FatherName", "MotherName", "Gender", "Postcode")
+        );
+
+        postcodeDB = new FileDatabase(
+                "postcode.db",
+                Arrays.asList("PostCode", "Division", "District", "Thana")
+        );
+
+        schoolAreaDB = new FileDatabase(
+                "schoolarea.db",
+                Arrays.asList("EIIN", "Name", "Postcode")
+        );
+
+        schoolInfoDB = new FileDatabase(
+                "seatinfo.db",
+                Arrays.asList("SeatID", "EIIN", "Class", "Shift", "SeatGender", "SeatAvailable")
+        );
+
+        nidDB = new FileDatabase(
+                "nid.db",
+                Arrays.asList("NID", "Name")
+        );
+
+        referenceDB = new FileDatabase(
+                "reference.db",
+                Arrays.asList("RefID", "NID")
+        );
+
+        classEligibilityDB = new FileDatabase(
+                "class_eligibility.db",
+                Arrays.asList("Class", "MinDate", "MaxDate")
+        );
+
+        authorityLoginDB = new FileDatabase(
+                "authority_login.db",
+                Arrays.asList("EIIN", "Password")
+        );
+
+        // APPLICANT DATABASE INSERTION
+        
+        applicantDB = new FileDatabase(
+            "applicant.db",
+            Arrays.asList("ApplicantID", "BirthCertNo", "SchoolAreaPostCode", "SubmissionTime")
+        );
+
+        
+        studentInfoDB = new FileDatabase(
+                "student_info.db",
+                Arrays.asList(
+                        "BirthCertificateNo",
+                        "Name",
+                        "DOB",
+                        "Gender",
+                        "Religion",
+                        "MobileNo",
+                        "FatherNID",
+                        "MotherNID",
+                        "LocalGurdianNID",
+                        "AdmittedClass",
+                        "PresentAdressPostcode",
+                        "DetailedPresentAdress",
+                        "ParmanentAdressPostcode",
+                        "DetailedParmanentAdress"
+                )
+        );
+
+        quotaChoiceDB = new FileDatabase(
+            "quota_choice.db", 
+            Arrays.asList("ChoiceID", "ApplicantID", "SeatID", "Quota", "Preference", "RefID")
+        );
+
+        seedIfEmpty(); 
+    }
+
+    public static void seedIfEmpty() {
 
         // Postcode
         if (postcodeDB.readAll().isEmpty()) {
@@ -868,4 +945,5 @@ private static void insertAuthorityLogin(String eiin, String password6Digit) {
     authorityLoginDB.insert(r);
 }
 }
+
 
