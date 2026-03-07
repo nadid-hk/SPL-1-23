@@ -102,14 +102,14 @@ public class DatabaseSetup {
 
     private static void seedIfEmpty() {
 
-        /* ================= POSTCODES ================= */
+        // Postcode
         if (postcodeDB.readAll().isEmpty()) {
             insertPost("1000", "DHAKA", "DHAKA", "MOTIJHEEL");
             insertPost("1217", "DHAKA", "DHAKA", "RAMNA");
             insertPost("1206", "DHAKA", "DHAKA", "CANTONMENT & TEJGAON");
         }
 
-        /* ================= NID (Parents + extra local guardians) ================= */
+        // NID (Parents + extra local guardians)
         // Extra people added for local guardian testing
         if (nidDB.readAll().isEmpty()) {
 
@@ -530,7 +530,7 @@ insertNid("19910000000000001", "MD. KAMAL HASAN");
     insertNid("19930000000000007", "MD. RAFSAN ALI");
         }
 
-        /* ================= REFERENCES ================= */
+        // REFERENCES 
         if (referenceDB.readAll().isEmpty()) {
             insertRef("REF001", "19901234567890123");
             insertRef("REF002", "19887654321098765");
@@ -540,9 +540,8 @@ insertNid("19910000000000001", "MD. KAMAL HASAN");
             insertRef("REF006", "19880000111122223");
         }
 
-        /* ================= BIRTH CERTS (DOB shifted +2 years assumption) ================= */
-        // BIRTH CERTIFICATE DATABASE INSERTION
-// BIRTH CERTIFICATE DATABASE INSERTION
+        
+// BIRTH CERTIFICATE DATABASE INSERTION FROM ChatGPT
 if (birthDB.readAll().isEmpty()) {
     insertBirth("BC3001", "RAHIM HASAN", "24-07-2017", "MD. KAMAL HASAN", "FARHANA AKTER", "MALE", "1000");
     insertBirth("BC3002", "KAMRUN NAHAR", "11-02-2016", "MD. SELIM UDDIN", "RUKEYA BEGUM", "FEMALE", "1217");
@@ -746,7 +745,7 @@ if (birthDB.readAll().isEmpty()) {
     insertBirth("BC3200", "MUNTAHA SULTANA", "18-04-2019", "MD. FARHAN UDDIN", "MST. TANJILA KHATUN", "FEMALE", "1217");
 }
 
-        /* ================= SCHOOL AREAS ================= */
+        // School Area
         if (schoolAreaDB.readAll().isEmpty()) {
             insertSchoolArea("108001", "Adamjee Cantonment School", "1206");
             insertSchoolArea("108002", "B.A.F. Shaheen College", "1206");
@@ -766,7 +765,7 @@ if (birthDB.readAll().isEmpty()) {
             insertSchoolArea("108205", "Eskaton Garden High School", "1217");
         }
 
-        /* ================= CLASS ELIGIBILITY ================= */
+    //    CLASS ELIGIBILITY
         if (classEligibilityDB.readAll().isEmpty()) {
             insertEligibility("1", "01-01-2019", "31-12-2020");
             insertEligibility("3", "01-01-2017", "31-12-2018");
@@ -774,7 +773,7 @@ if (birthDB.readAll().isEmpty()) {
             insertEligibility("9", "01-01-2011", "31-12-2012");
         }
 
-        /* ================= AUTHORITY LOGIN ================= */
+        // AUTHORITY LOGIN
         if (authorityLoginDB.readAll().isEmpty()) {
             insertAuthorityLogin("108001", "482193");
             insertAuthorityLogin("108002", "716204");
@@ -794,7 +793,7 @@ if (birthDB.readAll().isEmpty()) {
             insertAuthorityLogin("108205", "965703");
         }
 
-        /* ================= SEAT INFO ================= */
+    //     SEAT INFO
         if (schoolInfoDB.readAll().isEmpty()) {
             addSeat("108001", 1, "MORNING", "BOTH", 60);
             addSeat("108001", 1, "DAY",     "BOTH", 55);
@@ -859,7 +858,7 @@ if (birthDB.readAll().isEmpty()) {
         // DO NOT seed applicantDB or studentInfoDB (must stay empty)
     }
 
-    /* -------------------- Insert Helpers -------------------- */
+    // Insert Helpers 
 
     private static void insertBirth(String bcNo, String name, String bdate,
                                     String father, String mother, String gender, String postcode) {
