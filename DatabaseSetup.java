@@ -583,7 +583,7 @@ insertNid("19910000000000001", "MD. KAMAL HASAN");
 }
 
         
-// BIRTH CERTIFICATE DATABASE INSERTION FROM ChatGPT
+// BIRTH CERTIFICATE DATABASE INSERTION 
 if (birthDB.readAll().isEmpty()) {
     insertBirth("BC3001", "RAHIM HASAN", "24-07-2017", "MD. KAMAL HASAN", "FARHANA AKTER", "MALE", "1000");
     insertBirth("BC3002", "KAMRUN NAHAR", "11-02-2016", "MD. SELIM UDDIN", "RUKEYA BEGUM", "FEMALE", "1217");
@@ -990,6 +990,7 @@ private static void insertAuthorityLogin(String eiin, String password6Digit) {
     authorityLoginDB.insert(r);
 }
 }
+
 
 
 
