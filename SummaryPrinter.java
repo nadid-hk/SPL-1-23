@@ -18,16 +18,14 @@ public class SummaryPrinter {
         n = line(idx, io, n, "Religion", f.religion);
         n = line(idx, io, n, "Mobile", f.mobile);
 
-        n = line(idx, io, n, "Father NID", f.fatherNid);
-        n = line(idx, io, n, "Mother NID", f.motherNid);
-        n = line(idx, io, n, "Local Guardian NID", f.localGuardianNid);
+        n = line(idx, io, n, "Father Info", guardianInfo(f.fatherName, f.fatherNid));
+        n = line(idx, io, n, "Mother Info", guardianInfo(f.motherName, f.motherNid));
+        n = line(idx, io, n, "Local Guardian Info", guardianInfo(f.localGuardianName, f.localGuardianNid));
 
         n = line(idx, io, n, "Desired Class", String.valueOf(f.desiredClass));
 
-        n = line(idx, io, n, "Present Address Postcode", f.present.postCode);
-        n = line(idx, io, n, "Present Detailed Address", f.present.detailed);
-        n = line(idx, io, n, "Permanent Address Postcode", f.permanent.postCode);
-        n = line(idx, io, n, "Permanent Detailed Address", f.permanent.detailed);
+        n = line(idx, io, n, "Present Address", formatAddress(f.present));
+        n = line(idx, io, n, "Permanent Address", formatAddress(f.permanent));
 
         n = line(idx, io, n, "Applying School Area Postcode", f.schoolAreaPostCode);
 
@@ -53,5 +51,24 @@ public class SummaryPrinter {
         io.println(String.format("%2d) %-30s : %s", n, label, value));
         idx.put(n, label);
         return n + 1;
+    }
+
+    private static String guardianInfo(String name, String nid) {
+        String safeName = safe(name);
+        String safeNid = safe(nid);
+        if (safeNid.isEmpty()) return "(NOT PROVIDED)";
+        return safeName + " (NID: " + safeNid + ")";
+    }
+
+    private static String formatAddress(Address a) {
+        return safe(a.detailed)
+                + ", THANA: " + safe(a.thana)
+                + " (" + safe(a.postCode) + ")"
+                + ", DISTRICT: " + safe(a.district)
+                + ", DIVISION: " + safe(a.division);
+    }
+
+    private static String safe(String s) {
+        return s == null ? "" : s.trim();
     }
 }

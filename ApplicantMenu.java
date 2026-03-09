@@ -1,9 +1,12 @@
+import java.util.*;
+
 public class ApplicantMenu {
     private final ConsoleIO io;
     private final ApplicationWorkflow workflow;
 
-    private static final boolean APPLICATION_WINDOW_OPEN = true;
-    private static final boolean RESULT_READY = false;
+    // CHANGE START: Result readiness now depends on lottery run status written by admin flow.
+    private static final String LOTTERY_STATUS_FILE = "lottery_status.db";
+    // CHANGE END
 
     private static final String ANSI_CYAN = "\u001B[36m";
     private static final String ANSI_RESET = "\u001B[0m";
@@ -19,10 +22,17 @@ public class ApplicantMenu {
                 showHeader();
                 showOptions();
                 int option = io.promptInt("Choose option: ");
+                boolean resultReady = isResultReady();
                 switch (option) {
                     case 1:
+                        if(resultReady){
+                            io.println("Time's Up! The application window has expired.");
+                            io.hr();
+                        }
+                        else {
                         ensureWindowOpen();
                         workflow.runSingleApplication();
+                        }
                         break;
                     case 2:
                         ensureWindowOpen();
@@ -37,7 +47,7 @@ public class ApplicantMenu {
                         workflow.deleteApplication();
                         break;
                     case 5:
-                        if (!RESULT_READY) {
+                        if (!resultReady) {
                             io.println("Result module is not ready yet. Enable it after lottery implementation.");
                             io.hr();
                         } else {
@@ -65,10 +75,18 @@ public class ApplicantMenu {
     }
 
     private void ensureWindowOpen() throws ValidationException {
-        if (!APPLICATION_WINDOW_OPEN) {
+        if (isResultReady()) {
             throw new ValidationException("This module is currently unavailable because the application window has expired.");
         }
     }
+
+    // CHANGE START: This is intentionally isolated so teammates can swap status source later.
+    private boolean isResultReady() {
+        FileDatabase statusDB = new FileDatabase(LOTTERY_STATUS_FILE, Arrays.asList("Key", "Value"));
+        Map<String, String> row = statusDB.find("Key", "RESULT_READY");
+        return row != null && "TRUE".equalsIgnoreCase(row.get("Value"));
+    }
+    // CHANGE END
 
     private void showHeader() {
         io.println(ANSI_CYAN + "==========================================" + ANSI_RESET);
@@ -83,8 +101,6 @@ public class ApplicantMenu {
         io.println("3. Recover applicant ID");
         io.println("4. Delete application");
         io.println("5. Show result");
-        io.println("   i) Show result by ApplicantID or StudentID");
-        io.println("   ii) Show a school's result");
         io.println("6. Exit");
     }
 }

@@ -155,6 +155,18 @@ class SchoolRepository {
         return out;
     }
 
+    public List<Integer> availableClassesByEiin(String eiin) {
+        Set<Integer> classes = new TreeSet<>();
+        for (Map<String, String> seat : seatDB.readAll()) {
+            if (!eiin.equals(seat.get("EIIN"))) continue;
+            try {
+                classes.add(Integer.parseInt(seat.get("Class")));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return new ArrayList<>(classes);
+    }
+
     public List<Map<String,String>> seatsForAreaClassGender(String pc, int cls, String studentGender) {
         // Find EIIN list for area
         Set<String> eiins = new HashSet<>();

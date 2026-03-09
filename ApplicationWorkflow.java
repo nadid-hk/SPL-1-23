@@ -17,7 +17,7 @@ public class ApplicationWorkflow {
     private final QuotaChoiceRepository quotaChoiceRepo;
 
     private final OtpService otp = new OtpService();
-    private static final String BD_PHONE_REGEX = "^(?:\\+8801|8801|01)\\d{8}$";
+    private static final String BD_PHONE_REGEX = "^(?:\\+?880|0)1[3-9]\\d{8}$";
 
     public ApplicationWorkflow(DbContext ctx, ConsoleIO io) {
         this.ctx = ctx;
@@ -68,7 +68,13 @@ public class ApplicationWorkflow {
 
         if (f.religion.isEmpty()) askReligion(f);
         if (f.mobile.isEmpty()) askMobileWithOtp(f, birth);
-        if (f.fatherNid.isEmpty() && f.motherNid.isEmpty() && f.localGuardianNid.isEmpty()) askGuardians(f, birth);
+        // CHANGE START: Always normalize guardian info, but only force local guardian if both parents are skipped.
+        if (f.fatherNid.isEmpty() && f.motherNid.isEmpty() && f.localGuardianNid.isEmpty()) {
+            askGuardians(f, birth);
+        } else {
+            trySetGuardianNames(f);
+        }
+        // CHANGE END
         if (f.desiredClass < 0) askDesiredClassWithEligibilityCheck(f);
 
         if (f.present.postCode.isEmpty() || f.present.detailed.isEmpty()) f.present = askAddress("PRESENT ADDRESS");
@@ -181,12 +187,7 @@ public class ApplicationWorkflow {
                 if (!mobile.matches(BD_PHONE_REGEX)) {
                     throw new ValidationException("Enter a valid Bangladeshi mobile number. Example: 017XXXXXXXX, 88017XXXXXXXX, or +88017XXXXXXXX.");
                 }
-
-                String code = otp.generate6Digit();
-                io.println("OTP sent to " + maskPhone(mobile));
-                io.println("[Demo OTP: " + code + "]");
-                String user = io.promptNonEmpty("Enter OTP: ");
-                if (!code.equals(user)) throw new ValidationException("OTP mismatch.");
+                sendAndVerifyOtp(mobile);
 
                 f.mobile = mobile;
                 io.hr();
@@ -208,12 +209,16 @@ public class ApplicationWorkflow {
         io.println("Enter guardian information. Press ENTER to skip a field. Type \\b anytime to return to main menu.");
 
         f.fatherNid = askParentNid("FATHER", birth.fatherName);
+        if (!f.fatherNid.isEmpty()) f.fatherName = safeUpper(nidRepo.nameByNid(f.fatherNid));
         f.motherNid = askParentNid("MOTHER", birth.motherName);
+        if (!f.motherNid.isEmpty()) f.motherName = safeUpper(nidRepo.nameByNid(f.motherNid));
 
+        // CHANGE START: Local guardian is mandatory only when both father and mother are skipped.
         if (f.fatherNid.isEmpty() && f.motherNid.isEmpty()) {
             while (true) {
                 try {
                     String lg = io.promptNonEmpty("Local Guardian NID (required if both father and mother are skipped): ");
+                    validateNidDigitsOnly("LOCAL GUARDIAN", lg);
                     validateNidExists("LOCAL GUARDIAN", lg);
                     f.localGuardianNid = lg;
                     f.localGuardianName = safeUpper(nidRepo.nameByNid(lg));
@@ -222,7 +227,11 @@ public class ApplicationWorkflow {
                     io.println("ERROR: " + e.getMessage());
                 }
             }
+        } else {
+            f.localGuardianNid = "";
+            f.localGuardianName = "";
         }
+        // CHANGE END
         io.hr();
     }
 
@@ -231,6 +240,7 @@ public class ApplicationWorkflow {
             try {
                 String nid = io.promptOptional(label + " NID (press ENTER to skip): ");
                 if (nid.isEmpty()) return "";
+                validateNidDigitsOnly(label, nid);
 
                 String nidName = nidRepo.nameByNid(nid);
                 if (nidName == null) throw new ValidationException(label + " NID not found.");
@@ -249,6 +259,15 @@ public class ApplicationWorkflow {
         String name = nidRepo.nameByNid(nid);
         if (name == null) throw new ValidationException(label + " NID not found.");
     }
+
+    // CHANGE START: Centralized NID digit-only validation for clear error feedback.
+    private void validateNidDigitsOnly(String label, String nid) throws ValidationException {
+        if (nid == null || nid.isEmpty()) return;
+        if (!nid.matches("\\d+")) {
+            throw new ValidationException(label + " NID must contain digits only (no letters/symbols).");
+        }
+    }
+    // CHANGE END
 
     private void trySetGuardianNames(ApplicationForm f) {
         if (!safe(f.fatherNid).isEmpty()) f.fatherName = safeUpper(nidRepo.nameByNid(f.fatherNid));
@@ -476,14 +495,12 @@ public class ApplicationWorkflow {
                 return true;
             case "Religion": return f.isLocked("Religion");
             case "Mobile": return f.isLocked("Mobile");
-            case "Father NID": return f.isLocked("FatherNID");
-            case "Mother NID": return f.isLocked("MotherNID");
-            case "Local Guardian NID": return f.isLocked("LocalGurdianNID");
+            case "Father Info": return f.isLocked("FatherNID");
+            case "Mother Info": return f.isLocked("MotherNID");
+            case "Local Guardian Info": return f.isLocked("LocalGurdianNID");
             case "Desired Class": return f.isLocked("AdmittedClass");
-            case "Present Address Postcode": return f.isLocked("PresentAdressPostcode");
-            case "Present Detailed Address": return f.isLocked("DetailedPresentAdress");
-            case "Permanent Address Postcode": return f.isLocked("ParmanentAdressPostcode");
-            case "Permanent Detailed Address": return f.isLocked("DetailedParmanentAdress");
+            case "Present Address": return f.isLocked("PresentAdressPostcode") || f.isLocked("DetailedPresentAdress");
+            case "Permanent Address": return f.isLocked("ParmanentAdressPostcode") || f.isLocked("DetailedParmanentAdress");
             default: return false;
         }
     }
@@ -497,9 +514,9 @@ public class ApplicationWorkflow {
                 f.mobile = "";
                 askMobileWithOtp(f, birth);
                 break;
-            case "Father NID":
-            case "Mother NID":
-            case "Local Guardian NID":
+            case "Father Info":
+            case "Mother Info":
+            case "Local Guardian Info":
                 askGuardians(f, birth);
                 break;
             case "Desired Class":
@@ -508,13 +525,11 @@ public class ApplicationWorkflow {
                 f.choices.clear();
                 askApplyingAreaAndChoices(f);
                 break;
-            case "Present Address Postcode":
-            case "Present Detailed Address":
+            case "Present Address":
                 f.present = askAddress("PRESENT ADDRESS (RE-EDIT)");
                 f.choices.clear();
                 break;
-            case "Permanent Address Postcode":
-            case "Permanent Detailed Address":
+            case "Permanent Address":
                 f.permanent = askAddress("PERMANENT ADDRESS (RE-EDIT)");
                 break;
             case "Applying School Area Postcode":
@@ -587,14 +602,12 @@ public class ApplicationWorkflow {
             bw.write("GENDER: " + f.gender + "\n");
             bw.write("RELIGION: " + f.religion + "\n");
             bw.write("MOBILE: " + f.mobile + "\n\n");
-            bw.write("FATHER NID: " + f.fatherNid + "\n");
-            bw.write("MOTHER NID: " + f.motherNid + "\n");
-            bw.write("LOCAL GUARDIAN NID: " + f.localGuardianNid + "\n\n");
+            bw.write("FATHER: " + guardianCardLine(f.fatherName, f.fatherNid) + "\n");
+            bw.write("MOTHER: " + guardianCardLine(f.motherName, f.motherNid) + "\n");
+            bw.write("LOCAL GUARDIAN: " + guardianCardLine(f.localGuardianName, f.localGuardianNid) + "\n\n");
             bw.write("DESIRED CLASS: " + f.desiredClass + "\n\n");
-            bw.write("PRESENT ADDRESS: " + f.present.postCode + " (" + f.present.division + ", " + f.present.district + ", " + f.present.thana + ")\n");
-            bw.write("PRESENT DETAIL: " + f.present.detailed + "\n\n");
-            bw.write("PERMANENT ADDRESS: " + f.permanent.postCode + " (" + f.permanent.division + ", " + f.permanent.district + ", " + f.permanent.thana + ")\n");
-            bw.write("PERMANENT DETAIL: " + f.permanent.detailed + "\n\n");
+            bw.write("PRESENT ADDRESS: " + formatAddressLine(f.present) + "\n\n");
+            bw.write("PERMANENT ADDRESS: " + formatAddressLine(f.permanent) + "\n\n");
             bw.write("APPLYING SCHOOL AREA POSTCODE: " + f.schoolAreaPostCode + "\n\n");
             bw.write("CHOICES:\n");
             int rank = 1;
@@ -608,128 +621,162 @@ public class ApplicationWorkflow {
     }
 
     public void showVacantSeats() {
-        try {
-            io.println("VACANT SEAT SEARCH");
-            Map<String, String> pcRec = selectPostcodeRecordByAdminArea();
-            String postCode = safeUpper(pcRec.get("PostCode"));
-            List<Map<String, String>> schools = schoolRepo.schoolsInPostcode(postCode);
-            if (schools.isEmpty()) throw new NotFoundException("No schools found in this postcode.");
+        // CHANGE START: Keep user in this feature on input errors instead of returning to main menu.
+        while (true) {
+            try {
+                io.println("VACANT SEAT SEARCH");
+                io.println("Instruction: We are selecting a school first. Start by choosing the school location (Division -> District -> Thana).");
+                Map<String, String> pcRec = selectPostcodeRecordByAdminArea();
+                String postCode = safeUpper(pcRec.get("PostCode"));
 
-            io.println("Schools in postcode " + postCode + ":");
-            for (int i = 0; i < schools.size(); i++) {
-                Map<String, String> s = schools.get(i);
-                io.println(String.format("  %d) %s || EIIN: %s", i + 1, safeUpper(s.get("Name")), safeUpper(s.get("EIIN"))));
-            }
-            int pick = io.promptInt("Select school number: ");
-            if (pick < 1 || pick > schools.size()) throw new ValidationException("Invalid school selection.");
-            String eiin = schools.get(pick - 1).get("EIIN");
+                Map<String, String> chosenSchool = selectSchoolInPostcode(postCode);
+                String eiin = safeUpper(chosenSchool.get("EIIN"));
+                String schoolName = safeUpper(chosenSchool.get("Name"));
 
-            int cls = io.promptInt("Enter class: ");
-            List<Map<String, String>> matches = schoolRepo.seatRowsByEiinAndClass(eiin, cls);
-            if (matches.isEmpty()) throw new NotFoundException("No seat rows found for this EIIN/Class combination.");
+                int cls = chooseClassInSchool(eiin);
+                List<Map<String, String>> matches = schoolRepo.seatRowsByEiinAndClass(eiin, cls);
+                if (matches.isEmpty()) throw new NotFoundException("No seat rows found for this school/class combination.");
 
-            io.println("SCHOOL NAME (SHIFT) || SEAT GENDER || SEATS");
-            String schoolName = safeUpper(schools.get(pick - 1).get("Name"));
-            for (Map<String, String> row : matches) {
-                io.println(String.format("%s (%s) || %s || %s",
-                        schoolName,
-                        safeUpper(row.get("Shift")),
-                        safeUpper(row.get("SeatGender")),
-                        safeUpper(row.get("SeatAvailable"))));
-            }
-            io.hr();
-        } catch (BackToMainMenuSignal e) {
-            io.println("\nReturned to main menu.");
-            io.hr();
-        } catch (Exception e) {
-            io.println("ERROR: " + e.getMessage());
-            io.hr();
-        }
-    }
-
-    public void recoverApplicantIds() {
-        try {
-            String bcNo = io.promptNonEmpty("Enter Birth Certificate Number: ");
-            Map<String, String> student = studentRepo.findByBcNo(bcNo);
-            if (student == null) throw new NotFoundException("No student found for this Birth Certificate Number.");
-
-            String mobile = safeUpper(student.get("MobileNo"));
-            validateOtpForRecovery(mobile);
-
-            List<Map<String, String>> apps = applicantRepo.findAllByBcNo(bcNo);
-            if (apps.isEmpty()) throw new NotFoundException("No applicant ID found for this student.");
-
-            io.println("APPLICANT ID | SCHOOL AREA NAME | SUBMISSION TIME");
-            for (Map<String, String> app : apps) {
-                String postcode = safeUpper(app.get("SchoolAreaPostCode"));
-                String areaName = areaNameFromPostcode(postcode);
-                io.println(app.get("ApplicantID") + " | " + areaName + " | " + app.get("SubmissionTime"));
-            }
-            io.hr();
-        } catch (BackToMainMenuSignal e) {
-            io.println("\nReturned to main menu.");
-            io.hr();
-        } catch (Exception e) {
-            io.println("ERROR: " + e.getMessage());
-            io.hr();
-        }
-    }
-
-    public void deleteApplication() {
-        try {
-            String bcNo = io.promptNonEmpty("Enter Birth Certificate Number: ");
-            Map<String, String> student = studentRepo.findByBcNo(bcNo);
-            if (student == null) throw new NotFoundException("No student found for this Birth Certificate Number.");
-
-            String mobile = safeUpper(student.get("MobileNo"));
-            validateOtpForRecovery(mobile);
-
-            List<Map<String, String>> apps = applicantRepo.findAllByBcNo(bcNo);
-            if (apps.isEmpty()) throw new NotFoundException("No application found for this student.");
-
-            io.println("Existing Applications:");
-            for (int i = 0; i < apps.size(); i++) {
-                Map<String, String> app = apps.get(i);
-                io.println(String.format("  %d) %s | %s | %s", i + 1, app.get("ApplicantID"), areaNameFromPostcode(app.get("SchoolAreaPostCode")), app.get("SubmissionTime")));
-            }
-            int pick = io.promptInt("Select application number to delete: ");
-            if (pick < 1 || pick > apps.size()) throw new ValidationException("Invalid selection.");
-
-            Map<String, String> app = apps.get(pick - 1);
-            String appId = app.get("ApplicantID");
-            if (!io.confirm("Delete application " + appId + "?")) {
-                io.println("Deletion cancelled.");
+                io.println("----------------------------------------------------------------------------------------");
+                io.println("VACANT SEATS: " + schoolName + " | CLASS " + cls);
+                io.println("----------------------------------------------------------------------------------------");
+                io.println("SHIFT || SEAT GENDER || AVAILABLE SEATS");
+                for (Map<String, String> row : matches) {
+                    io.println(String.format("  %s || %s || %s",
+                            safeUpper(row.get("Shift")),
+                            safeUpper(row.get("SeatGender")),
+                            safeUpper(row.get("SeatAvailable"))));
+                }
+                io.hr();
+                return;
+            } catch (BackToMainMenuSignal e) {
+                io.println("\nReturned to main menu.");
+                io.hr();
+                return;
+            } catch (ValidationException | NotFoundException e) {
+                io.println("ERROR: " + e.getMessage());
+            } catch (Exception e) {
+                io.println("ERROR: " + e.getMessage());
                 io.hr();
                 return;
             }
-
-            for (Map<String, String> choice : quotaChoiceRepo.findAllByApplicantId(appId)) {
-                ctx.quotaChoiceDB.delete("ChoiceID", choice.get("ChoiceID"));
-            }
-            ctx.applicantDB.delete("ApplicantID", appId);
-
-            io.println("Application deleted successfully: " + appId);
-            io.hr();
-        } catch (BackToMainMenuSignal e) {
-            io.println("\nReturned to main menu.");
-            io.hr();
-        } catch (Exception e) {
-            io.println("ERROR: " + e.getMessage());
-            io.hr();
         }
+        // CHANGE END
+    }
+
+    public void recoverApplicantIds() {
+        // CHANGE START: Recovery flow now retries on user errors instead of returning to menu.
+        while (true) {
+            try {
+                String bcNo = io.promptNonEmpty("Enter Birth Certificate Number: ");
+                Map<String, String> student = studentRepo.findByBcNo(bcNo);
+                if (student == null) throw new NotFoundException("No student found for this Birth Certificate Number.");
+
+                String mobile = safeUpper(student.get("MobileNo"));
+                validateOtpForRecovery(mobile);
+
+                List<Map<String, String>> apps = applicantRepo.findAllByBcNo(bcNo);
+                if (apps.isEmpty()) throw new NotFoundException("No applicant ID found for this student.");
+
+                io.println("APPLICANT ID | SCHOOL AREA NAME | SUBMISSION TIME");
+                for (Map<String, String> app : apps) {
+                    String postcode = safeUpper(app.get("SchoolAreaPostCode"));
+                    String areaName = areaNameFromPostcode(postcode);
+                    io.println(app.get("ApplicantID") + " | " + areaName + " | " + app.get("SubmissionTime"));
+                }
+                io.hr();
+                return;
+            } catch (BackToMainMenuSignal e) {
+                io.println("\nReturned to main menu.");
+                io.hr();
+                return;
+            } catch (ValidationException | NotFoundException e) {
+                io.println("ERROR: " + e.getMessage());
+            } catch (Exception e) {
+                io.println("ERROR: " + e.getMessage());
+                io.hr();
+                return;
+            }
+        }
+        // CHANGE END
+    }
+
+    public void deleteApplication() {
+        // CHANGE START: Delete flow now retries on user errors instead of returning to menu.
+        while (true) {
+            try {
+                String bcNo = io.promptNonEmpty("Enter Birth Certificate Number: ");
+                Map<String, String> student = studentRepo.findByBcNo(bcNo);
+                if (student == null) throw new NotFoundException("No student found for this Birth Certificate Number.");
+
+                String mobile = safeUpper(student.get("MobileNo"));
+                validateOtpForRecovery(mobile);
+
+                List<Map<String, String>> apps = applicantRepo.findAllByBcNo(bcNo);
+                if (apps.isEmpty()) throw new NotFoundException("No application found for this student.");
+
+                io.println("Existing Applications:");
+                for (int i = 0; i < apps.size(); i++) {
+                    Map<String, String> app = apps.get(i);
+                    io.println(String.format("  %d) %s | %s | %s", i + 1, app.get("ApplicantID"), areaNameFromPostcode(app.get("SchoolAreaPostCode")), app.get("SubmissionTime")));
+                }
+                int pick = io.promptInt("Select application number to delete: ");
+                if (pick < 1 || pick > apps.size()) throw new ValidationException("Invalid selection.");
+
+                Map<String, String> app = apps.get(pick - 1);
+                String appId = app.get("ApplicantID");
+                if (!io.confirm("Delete application " + appId + "?")) {
+                    io.println("Deletion cancelled.");
+                    io.hr();
+                    return;
+                }
+
+                for (Map<String, String> choice : quotaChoiceRepo.findAllByApplicantId(appId)) {
+                    ctx.quotaChoiceDB.delete("ChoiceID", choice.get("ChoiceID"));
+                }
+                ctx.applicantDB.delete("ApplicantID", appId);
+
+                io.println("Application deleted successfully: " + appId);
+                io.hr();
+                return;
+            } catch (BackToMainMenuSignal e) {
+                io.println("\nReturned to main menu.");
+                io.hr();
+                return;
+            } catch (ValidationException | NotFoundException e) {
+                io.println("ERROR: " + e.getMessage());
+            } catch (Exception e) {
+                io.println("ERROR: " + e.getMessage());
+                io.hr();
+                return;
+            }
+        }
+        // CHANGE END
     }
 
     public void showResultMenu() {
-        io.println("RESULT MODULE IS NOT READY YET. ENABLE THIS AFTER LOTTERY IMPLEMENTATION.");
-        io.hr();
+        // CHANGE START: Single result entry-point for teammate integration (StudentID/ApplicantID lookup).
+        while (true) {
+            try {
+                io.println("RESULT LOOKUP");
+                io.println("Plug your result-print function here (single flow, no school-wise submenu).");
+                String studentOrApplicantId = io.promptNonEmpty("Enter StudentID or ApplicantID: ");
+                io.println("Result implementation placeholder for ID: " + studentOrApplicantId);
+                io.hr();
+                return;
+            } catch (BackToMainMenuSignal e) {
+                io.println("\nReturned to main menu.");
+                io.hr();
+                return;
+            } catch (ValidationException e) {
+                io.println("ERROR: " + e.getMessage());
+            }
+        }
+        // CHANGE END
     }
 
     private void validateOtpForRecovery(String mobile) throws WorkflowException {
-        String code = otp.generate6Digit();
-        io.println("OTP sent to " + maskPhone(mobile));
-        io.println("[Demo OTP: " + code + "]");
-        String user = io.promptNonEmpty("Enter OTP: ");
-        if (!code.equals(user)) throw new ValidationException("OTP mismatch.");
+        sendAndVerifyOtp(mobile);
     }
 
     private String areaNameFromPostcode(String postcode) {
@@ -782,6 +829,70 @@ public class ApplicationWorkflow {
         int i = 1;
         for (SeatView v : views) io.println(String.format("%3d || %s || %s", i++, v.schoolName, v.shift));
         io.hr();
+    }
+
+    // CHANGE START: Shared school/class selection helpers for vacant seat flow.
+    private Map<String, String> selectSchoolInPostcode(String postCode) throws WorkflowException {
+        List<Map<String, String>> schools = schoolRepo.schoolsInPostcode(postCode);
+        if (schools.isEmpty()) throw new NotFoundException("No schools found in this postcode.");
+
+        io.println("Schools in postcode " + postCode + ":");
+        for (int i = 0; i < schools.size(); i++) {
+            Map<String, String> s = schools.get(i);
+            io.println(String.format("  %d) %s || EIIN: %s", i + 1, safeUpper(s.get("Name")), safeUpper(s.get("EIIN"))));
+        }
+        while (true) {
+            try {
+                int pick = io.promptInt("Select school number: ");
+                if (pick < 1 || pick > schools.size()) throw new ValidationException("Invalid school selection.");
+                return schools.get(pick - 1);
+            } catch (ValidationException e) {
+                io.println("ERROR: " + e.getMessage());
+            }
+        }
+    }
+
+    private int chooseClassInSchool(String eiin) throws WorkflowException {
+        while (true) {
+            List<Integer> classes = schoolRepo.availableClassesByEiin(eiin);
+            if (classes.isEmpty()) throw new NotFoundException("No classes found for this school.");
+
+            io.println("Available Classes:");
+            for (int i = 0; i < classes.size(); i++) {
+                io.println(String.format("  %d) Class %d", i + 1, classes.get(i)));
+            }
+            try {
+                int pick = io.promptInt("Select class number: ");
+                if (pick < 1 || pick > classes.size()) throw new ValidationException("Invalid class selection.");
+                return classes.get(pick - 1);
+            } catch (ValidationException e) {
+                io.println("ERROR: " + e.getMessage());
+            }
+        }
+    }
+    // CHANGE END
+
+    // CHANGE START: Shared OTP helper reused by application/recovery/delete.
+    private void sendAndVerifyOtp(String mobile) throws WorkflowException {
+        String code = otp.generate6Digit();
+        io.println("OTP sent to " + maskPhone(mobile));
+        io.println("[Demo OTP: " + code + "]");
+        String user = io.promptNonEmpty("Enter OTP: ");
+        if (!code.equals(user)) throw new ValidationException("OTP mismatch.");
+    }
+    // CHANGE END
+
+    private String guardianCardLine(String name, String nid) {
+        if (safe(nid).isEmpty()) return "(NOT PROVIDED)";
+        return safeUpper(name) + " (NID: " + safeUpper(nid) + ")";
+    }
+
+    private String formatAddressLine(Address a) {
+        return safeUpper(a.detailed)
+                + ", THANA: " + safeUpper(a.thana)
+                + " (" + safeUpper(a.postCode) + ")"
+                + ", DISTRICT: " + safeUpper(a.district)
+                + ", DIVISION: " + safeUpper(a.division);
     }
 
     private String maskPhone(String mobile) {
