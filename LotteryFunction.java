@@ -33,9 +33,11 @@ public void runLottery() {
         progressMade = false;
 
         List<Map<String, String>> seats = seatLotteryDB.readAll();
-        List<Map<String, String>> choices = quotaChoiceDB.readAll();
 
         for (Map<String, String> selectedSeat : seats) {
+
+            // Reload choices each time so deletions from prior winners are reflected
+            List<Map<String, String>> choices = quotaChoiceDB.readAll();
 
             String seatID = selectedSeat.get("SeatID");
 
@@ -109,6 +111,9 @@ public void runLottery() {
     } while (progressMade);
 
     markWaitingApplicants();
+    // CHANGE START (cross-team integration): expose result-ready state for applicant menu.
+    markResultReady();
+    // CHANGE END
 }
 
 // Helper Methods
@@ -159,11 +164,11 @@ private void deleteAllChoices(String studentID) {
 
 private boolean isAreaMatched(String studentID, String seatID) {
 
+    Map<String, String> applicantRow =
+            applicantDB.find("BirthCertNo", studentID);
+
     String applicantPost =
-            applicantDB.getValueByPrimaryKey(
-                    "BirthCertNo",
-                    studentID,
-                    "SchoolAreaPostCode");
+            (applicantRow != null) ? applicantRow.get("SchoolAreaPostCode") : null;
 
     String eiin =
             seatLotteryDB.getValueByPrimaryKey(
@@ -239,5 +244,22 @@ private void markWaitingApplicants() {
         }
     }
 }
+
+// CHANGE START (cross-team integration): isolated status marker for applicant menu gating.
+private void markResultReady() {
+    FileDatabase statusDB = new FileDatabase("lottery_status.db", Arrays.asList("Key", "Value"));
+    Map<String, String> existing = statusDB.find("Key", "RESULT_READY");
+    if (existing == null) {
+        Map<String, String> row = new LinkedHashMap<>();
+        row.put("Key", "RESULT_READY");
+        row.put("Value", "TRUE");
+        statusDB.insert(row);
+    } else {
+        Map<String, String> update = new HashMap<>();
+        update.put("Value", "TRUE");
+        statusDB.update("Key", "RESULT_READY", update);
+    }
+}
+// CHANGE END
 
 }
