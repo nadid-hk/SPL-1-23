@@ -38,7 +38,7 @@ public class Main {
         // ===== MENU WORKFLOW =====
         boolean running = true;
         while (running) {
-            System.out.println("Press 1 to add info ,Press 2 to show info ,Press 3 to Update totalSeatNumber");
+            System.out.println("Press 1 to add info ,Press 2 to show info ,Press 3 to Update totalSeatNumber,Press 4 to show Result");
             System.out.print("Choose option: ");
 
             int option;
@@ -67,7 +67,6 @@ public class Main {
                 System.out.print("Enter totalSeatNumber: ");
                 String totalSeatNumber = input.nextLine().trim();
 
-                // Read all rows ONCE
                 List<Map<String, String>> allRows = schoolInfoDB.readAll();
 
                 // 1) If same 4-tuple exists (EIIN, Class, Shift, SeatGender), update instead
