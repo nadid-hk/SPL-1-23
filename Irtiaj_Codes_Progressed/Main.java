@@ -187,6 +187,9 @@ public class Main {
                 System.out.print("Enter Shift: ");
                 String shift = input.nextLine().trim().toUpperCase();
 
+                System.out.print("Enter SeatGender: ");
+                String seatGender = input.nextLine().trim().toUpperCase();
+
                 Map<Strinng, String> target = null;
                 for (Map<String, String> r : schoolInfoDB.readAll()) {
                     if(loggedInEIIN.equals(r.get("EIIN")) &&
@@ -218,7 +221,14 @@ public class Main {
                 running = false;
             }
 
+            else if(option==4){
+                SchoolResult obj = new SchoolResult(loggedInEIIN);
+                obj.showSchoolWiseResult();
 
+                System.out.println("Exiting...");
+                running = false;
+            }
+                
             else {
                 System.out.println("Invalid option. Try again.\n");
             }
