@@ -36,7 +36,8 @@ public class Login {
         }
 
         String correctPassword = user.get("Password");
-        if (correctPassword != null && correctPassword.equals(password)) {
+        String enteredhashed = PasswordUtil.hashPassword(password);
+        if (correctPassword != null && correctPassword.equals(enteredhashed)) {
             System.out.println("Login successful.\n");
             return eiin;
         }
