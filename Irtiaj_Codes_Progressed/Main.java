@@ -139,7 +139,7 @@ public class Main {
                     System.out.println("TotalSeatNumber: " + totalSeatNumber);
                     System.out.println();
 
-                    System.ouut.println("Exiting...");
+                    System.out.println("Exiting...");
                     running = false;
                 }
             }
@@ -190,12 +190,12 @@ public class Main {
                 System.out.print("Enter SeatGender: ");
                 String seatGender = input.nextLine().trim().toUpperCase();
 
-                Map<Strinng, String> target = null;
+                Map<String, String> target = null;
                 for (Map<String, String> r : schoolInfoDB.readAll()) {
                     if(loggedInEIIN.equals(r.get("EIIN")) &&
                       className.equals(r.get("Class"))  &&
                       shift.equals(r.get("shift"))  &&
-                       seatGender.equals(r.get(""SeatGender))){
+                       seatGender.equals(r.get("SeatGender"))){
 
                         target = r;
                         break;
