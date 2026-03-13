@@ -1,7 +1,7 @@
 // Main.java
 import java.util.*;
 
-public class Main {
+public class SchoolAuthority {
 
     public static void main(String[] args) {
 
