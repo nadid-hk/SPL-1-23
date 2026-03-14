@@ -38,8 +38,13 @@ public class SchoolAuthority {
         // ===== MENU WORKFLOW =====
         boolean running = true;
         while (running) {
-            System.out.println("Press 1 to add info ,Press 2 to show info ,Press 3 to Update totalSeatNumber,Press 4 to show Result");
-            System.out.print("Choose option: ");
+            System.out.println("  SCHOOL AUTHORITY MENU  ");
+            System.out.println("1. Add Info");
+            System.out.println("2. Show Info");
+            System.out.println("3. Update Total Seat Number");
+            System.out.println("4. Show Result");
+            System.out.println("0. Exit");
+            System.out.print("Choose Option: ");
 
             int option;
             try {
@@ -139,8 +144,6 @@ public class SchoolAuthority {
                     System.out.println("TotalSeatNumber: " + totalSeatNumber);
                     System.out.println();
 
-                    System.out.println("Exiting...");
-                    running = false;
                 }
             }
 
@@ -174,8 +177,6 @@ public class SchoolAuthority {
                     }
                     System.out.println();
 
-                    System.out.println("Exiting...");
-                    running = false;
                 }
             }
 
@@ -217,14 +218,15 @@ public class SchoolAuthority {
                 schoolInfoDB.update("SeatID", seatID, updateData);
                 System.out.println("Update completed.\n");
 
-                System.out.println("Exiting...");
-                running = false;
             }
 
             else if(option==4){
                 SchoolResult obj = new SchoolResult(loggedInEIIN);
                 obj.showSchoolWiseResult();
 
+            }
+
+            else if(option==0){
                 System.out.println("Exiting...");
                 running = false;
             }
