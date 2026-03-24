@@ -366,44 +366,50 @@ public class ApplicationWorkflow {
                 io.println("You can choose up to " + maxChoices + " choices.");
                 f.choices.clear();
 
-                for (int rank = 1; rank <= maxChoices; rank++) {
-                    while (true) {
-                        String s = io.promptOptional("Enter number for choice " + rank + " (or press ENTER to stop): ");
-                        if (s.isEmpty()) return;
-                        int idx;
-                        try {
-                            idx = Integer.parseInt(s);
-                        } catch (NumberFormatException e) {
-                            io.println("ERROR: Please enter a valid number.");
-                            continue;
-                        }
-                        if (idx < 1 || idx > views.size()) {
-                            io.println("ERROR: Selection out of range.");
-                            continue;
-                        }
+                boolean prevAutoClear = io.isAutoClearAfterInput();
+                io.setAutoClearAfterInput(false);
+                try {
+                    for (int rank = 1; rank <= maxChoices; rank++) {
+                        while (true) {
+                            String s = io.promptOptional("Enter number for choice " + rank + " (or press ENTER to stop): ");
+                            if (s.isEmpty()) return;
+                            int idx;
+                            try {
+                                idx = Integer.parseInt(s);
+                            } catch (NumberFormatException e) {
+                                io.println("ERROR: Please enter a valid number.");
+                                continue;
+                            }
+                            if (idx < 1 || idx > views.size()) {
+                                io.println("ERROR: Selection out of range.");
+                                continue;
+                            }
 
-                        SeatView v = views.get(idx - 1);
-                        boolean dup = false;
-                        for (Choice existing : f.choices) if (existing.seatId.equals(v.seatId)) dup = true;
-                        if (dup) {
-                            io.println("ERROR: You already selected this seat in this application.");
-                            continue;
-                        }
-                        if (previouslyUsed.contains(v.seatId)) {
-                            io.println("ERROR: This SeatID was already used in a previous application of this student.");
-                            continue;
-                        }
+                            SeatView v = views.get(idx - 1);
+                            boolean dup = false;
+                            for (Choice existing : f.choices) if (existing.seatId.equals(v.seatId)) dup = true;
+                            if (dup) {
+                                io.println("ERROR: You already selected this seat in this application.");
+                                continue;
+                            }
+                            if (previouslyUsed.contains(v.seatId)) {
+                                io.println("ERROR: This SeatID was already used in a previous application of this student.");
+                                continue;
+                            }
 
-                        Choice c = new Choice();
-                        c.seatId = v.seatId;
-                        c.schoolName = v.schoolName;
-                        c.shift = v.shift;
-                        applyQuotaRules(f, c);
-                        f.choices.add(c);
-                        io.println("Saved choice " + rank + ": " + v.schoolName + " || " + v.shift + " || " + c.quota);
-                        io.hr();
-                        break;
+                            Choice c = new Choice();
+                            c.seatId = v.seatId;
+                            c.schoolName = v.schoolName;
+                            c.shift = v.shift;
+                            applyQuotaRules(f, c);
+                            f.choices.add(c);
+                            io.println("Saved choice " + rank + ": " + v.schoolName + " || " + v.shift + " || " + c.quota);
+                            io.hr();
+                            break;
+                        }
                     }
+                } finally {
+                    io.setAutoClearAfterInput(prevAutoClear);
                 }
                 return;
             } catch (ValidationException | NotFoundException e) {
@@ -462,6 +468,7 @@ public class ApplicationWorkflow {
 
     private void summaryAndEditLoop(ApplicationForm f, BirthRecord birth) throws WorkflowException {
         while (true) {
+            io.clearScreenNow();
             LinkedHashMap<Integer, String> idx = SummaryPrinter.printAndIndex(f, io);
             io.println("Enter a number to re-edit that field, or 0 to confirm and submit.");
             int pick;

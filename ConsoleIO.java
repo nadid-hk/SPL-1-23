@@ -13,13 +13,30 @@ public class ConsoleIO {
         this.autoClearAfterInput = enabled;
     }
 
+    public boolean isAutoClearAfterInput() {
+        return autoClearAfterInput;
+    }
+
     private void clearScreen() {
-        // ANSI clear for most terminals; newline fallback keeps behavior usable elsewhere.
-        System.out.print("\u001b[H\u001b[2J");
-        System.out.flush();
-        for (int i = 0; i < 6; i++) {
-            System.out.println();
+        String os = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
+        try {
+            if (os.contains("win")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                System.out.print("\u001b[H\u001b[2J\u001b[3J");
+                System.out.flush();
+            }
+            return;
+        } catch (Exception ignored) {
+            // Fall through to ANSI fallback.
         }
+
+        System.out.print("\u001b[H\u001b[2J\u001b[3J");
+        System.out.flush();
+    }
+
+    public void clearScreenNow() {
+        clearScreen();
     }
 
     public void println(String s) {

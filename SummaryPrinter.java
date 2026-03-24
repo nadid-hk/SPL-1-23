@@ -4,7 +4,7 @@ public class SummaryPrinter {
 
     public static LinkedHashMap<Integer, String> printAndIndex(ApplicationForm f, ConsoleIO io) {
         io.hr();
-        io.println("APPLICATION SUMMARY (numbered for re-edit)");
+        io.println("Application summery");
         io.hr();
 
         LinkedHashMap<Integer, String> idx = new LinkedHashMap<>();
