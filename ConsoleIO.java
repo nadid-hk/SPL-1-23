@@ -2,9 +2,24 @@ import java.util.*;
 
 public class ConsoleIO {
     private final Scanner sc;
+    private boolean autoClearAfterInput;
 
     public ConsoleIO(Scanner sc) {
         this.sc = sc;
+        this.autoClearAfterInput = false;
+    }
+
+    public void setAutoClearAfterInput(boolean enabled) {
+        this.autoClearAfterInput = enabled;
+    }
+
+    private void clearScreen() {
+        // ANSI clear for most terminals; newline fallback keeps behavior usable elsewhere.
+        System.out.print("\u001b[H\u001b[2J");
+        System.out.flush();
+        for (int i = 0; i < 6; i++) {
+            System.out.println();
+        }
     }
 
     public void println(String s) {
@@ -18,6 +33,7 @@ public class ConsoleIO {
     public String promptLine(String prompt) {
         print(prompt);
         String raw = sc.nextLine().trim();
+        if (autoClearAfterInput) clearScreen();
         if (raw.equalsIgnoreCase("\\b")) throw new BackToMainMenuSignal();
         return raw.toUpperCase(Locale.ROOT);
     }

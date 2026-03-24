@@ -4,6 +4,7 @@ public class ApplicationCLI {
     public static void main(String[] args) {
         DatabaseSetup.initAndSeed();
         ConsoleIO io = new ConsoleIO(new Scanner(System.in));
+        io.setAutoClearAfterInput(true);
 
         DbContext ctx = new DbContext(
                 DatabaseSetup.birthDB,
