@@ -48,7 +48,7 @@ public class ApplicantMenu {
                         break;
                     case 5:
                         if (!resultReady) {
-                            io.println("Result module is not ready yet. Enable it after lottery implementation.");
+                            io.println("Result module is not ready yet!! ");
                             io.hr();
                         } else {
                             workflow.showResultMenu();
@@ -80,7 +80,7 @@ public class ApplicantMenu {
         }
     }
 
-    // CHANGE START: This is intentionally isolated so teammates can swap status source later.
+    // CHANGE START
     private boolean isResultReady() {
         FileDatabase statusDB = new FileDatabase(LOTTERY_STATUS_FILE, Arrays.asList("Key", "Value"));
         Map<String, String> row = statusDB.find("Key", "RESULT_READY");
@@ -90,7 +90,7 @@ public class ApplicantMenu {
 
     private void showHeader() {
         io.println(ANSI_CYAN + "==========================================" + ANSI_RESET);
-        io.println(ANSI_CYAN + "     YAHOO SCHOOL ADMISSION PORTAL" + ANSI_RESET);
+        io.println(ANSI_CYAN + "      SCHOOL ADMISSION PORTAL" + ANSI_RESET);
         io.println(ANSI_CYAN + "==========================================" + ANSI_RESET);
         io.println("Type \\b during any input to return to this menu.");
     }

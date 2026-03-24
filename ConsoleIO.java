@@ -52,5 +52,6 @@ public class ConsoleIO {
 
     public void hr() {
         println("------------------------------------------");
+
     }
 }
