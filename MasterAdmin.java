@@ -2,11 +2,15 @@ import java.util.*;
 
 public class MasterAdmin {
 
-    // Fixed for master admin login
     private static final String MASTER_ID = "MASTER";
     private static final String MASTER_PASS = "999999";
 
     public static FileDatabase authorityLoginDB;
+
+    private static ConsoleIO io;
+
+    private static final String ANSI_CYAN = "\u001B[36m";
+    private static final String ANSI_RESET = "\u001B[0m";
 
     public static void main(String[] args) {
 
@@ -18,58 +22,68 @@ public class MasterAdmin {
         DatabaseSetup.initAndSeed();
         ensureMasterAccount();
 
-        Scanner input = new Scanner(System.in);
+        io = new ConsoleIO(new Scanner(System.in));
 
-        // Master Login
+        // Enable auto clear
+        io.setAutoClearAfterInput(true);
+
+        // MASTER LOGIN
         while (true) {
-            System.out.println("  MASTER ADMIN LOGIN  ");
+            showHeader("MASTER ADMIN LOGIN");
 
-            System.out.print("Enter MasterID: ");
-            String masterId = input.nextLine().trim();
+            String masterId = io.promptLine("Enter MasterID: ");
+            String pass = io.promptLine("Enter Password: ");
 
-            System.out.print("Enter Password: ");
-            String pass = input.nextLine().trim();
-
-            Map<String, String> row = DatabaseSetup.authorityLoginDB.find("EIIN", masterId);
-
-            if (row != null && MASTER_ID.equals(masterId) && MASTER_PASS.equals(pass)) {
-                System.out.println("Login successful.\n");
+            if (MASTER_ID.equals(masterId) && MASTER_PASS.equals(pass)) {
+                io.println("Login successful.\n");
                 break;
             }
-            System.out.println("Incorrect MasterID or password.\n");
+            io.println("Incorrect MasterID or password.\n");
         }
+
+        //  Show header ONLY ONCE
+        io.clearScreenNow();
+        showHeader("MASTER ADMIN PORTAL");
 
         // MASTER MENU
         while (true) {
-            System.out.println("  MASTER ADMIN MENU  ");
-            System.out.println("1. Create School");
-            System.out.println("2. Show All Schools");
-            System.out.println("3. Delete School");
-            System.out.println("4. Run Lottery");
-            System.out.println("0. Exit");
-            System.out.print("Choose: ");
 
-            String choice = input.nextLine().trim();
+            io.println("1. Create School");
+            io.println("2. Show All Schools");
+            io.println("3. Delete School");
+            io.println("4. Run Lottery");
+            io.println("0. Exit");
+
+            String choice = io.promptLine("Choose: ");
 
             if ("1".equals(choice)) {
-                createSchool(input);
-            } else if ("2".equals(choice)) {
+                createSchool();
+            } 
+            else if ("2".equals(choice)) {
                 showAllSchools();
-            } else if("3".equals(choice)){
-                deleteSchool(input);
-            }
-            else if("4".equals(choice)){
-                runLottery(input);
-            }
+            } 
+            else if ("3".equals(choice)) {
+                deleteSchool();
+            } 
+            else if ("4".equals(choice)) {
+                runLottery();
+            } 
             else if ("0".equals(choice)) {
-                System.out.println("Exiting MASTER...");
-                break;
-            } else {
-                System.out.println("Invalid option.\n");
+                if (io.confirm("Are you sure you want to exit")) {
+                    io.println("Exiting MASTER...");
+                    break;
+                }
+            } 
+            else {
+                io.println("Invalid option.\n");
             }
         }
+    }
 
-        input.close();
+    private static void showHeader(String title) {
+        io.println(ANSI_CYAN + "==========================================" + ANSI_RESET);
+        io.println(ANSI_CYAN + "      " + title + ANSI_RESET);
+        io.println(ANSI_CYAN + "==========================================" + ANSI_RESET);
     }
 
     private static void ensureMasterAccount() {
@@ -82,77 +96,70 @@ public class MasterAdmin {
         }
     }
 
-    private static void createSchool(Scanner input) {
+    private static void createSchool() {
 
-        System.out.println("\n--- CREATE SCHOOL ---");
+        io.println("\n--- CREATE SCHOOL ---");
 
-        System.out.print("Enter School Name: ");
-        String schoolName = input.nextLine().trim();
-        if (schoolName.isEmpty()) {
-            System.out.println("School name cannot be empty.");
-            return;
+        try {
+            String schoolName = io.promptNonEmpty("Enter School Name: ");
+            String postcode = io.promptNonEmpty("Enter Postcode: ");
+
+            if (DatabaseSetup.postcodeDB.find("PostCode", postcode) == null) {
+                io.println("Invalid postcode.");
+                return;
+            }
+
+            String eiin = generateUniqueEIIN();
+
+            Map<String, String> r = new LinkedHashMap<>();
+            r.put("EIIN", eiin);
+            r.put("Name", schoolName);
+            r.put("Postcode", postcode);
+            DatabaseSetup.schoolAreaDB.insert(r);
+
+            String password = generateRandomPassword();
+            insertAuthorityLogin(eiin, password);
+
+            io.println("\nSchool created successfully!");
+            io.println("EIIN: " + eiin);
+            io.println("Password: " + password);
+
+        } catch (ValidationException e) {
+            io.println("ERROR: " + e.getMessage());
         }
+    }
 
-        System.out.print("Enter Postcode: ");
-        String postcode = input.nextLine().trim();
-        if (DatabaseSetup.postcodeDB.find("PostCode", postcode) == null) {
-            System.out.println("Invalid postcode.");
-            return;
+    private static void deleteSchool() {
+
+        io.println("\n--- DELETE SCHOOL ---");
+
+        try {
+            String schoolEiin = io.promptNonEmpty("Enter School EIIN: ");
+
+            String check = DatabaseSetup.schoolAreaDB
+                    .getValueByPrimaryKey("EIIN", schoolEiin, schoolEiin);
+
+            if (schoolEiin.equals(check)) {
+                DatabaseSetup.schoolAreaDB.delete("EIIN", schoolEiin);
+                DatabaseSetup.schoolInfoDB.delete("EIIN", schoolEiin);
+                io.println("Deletion Successfully Everything");
+            } else {
+                io.println("EIIN is not found in the database.");
+            }
+
+        } catch (ValidationException e) {
+            io.println("ERROR: " + e.getMessage());
         }
-
-        // Generate EIIN
-        String eiin = generateUniqueEIIN();
-
-        // Insert into schoolarea.db
-        Map<String, String> r = new LinkedHashMap<>();
-        r.put("EIIN", eiin);
-        r.put("Name", schoolName);
-        r.put("Postcode", postcode);
-        DatabaseSetup.schoolAreaDB.insert(r);
-
-        // Generate password and write to authority_login.db
-        String password = generateRandomPassword();
-        insertAuthorityLogin(eiin, password);
-
-        System.out.println("\nSchool created successfully!");
-        System.out.println("EIIN: " + eiin);
-        System.out.println("Password: " + password);
     }
 
+    private static void runLottery() {
 
-    private static void deleteSchool(Scanner input){
-    System.out.println("\n--- DELETE SCHOOL ---");
-
-    System.out.print("Enter School EIIN: ");
-    String schoolEiin = input.nextLine().trim();
-
-    if (schoolEiin.isEmpty()) {
-        System.out.println("Deletion is not possible without EIIN.");
-        return;
-    }
-
-    String check = DatabaseSetup.schoolAreaDB
-            .getValueByPrimaryKey("EIIN", schoolEiin, "EIIN");
-
-    if (schoolEiin.equals(check)) {
-
-        DatabaseSetup.schoolAreaDB.delete("EIIN", schoolEiin);
-        DatabaseSetup.schoolInfoDB.delete("EIIN", schoolEiin);
-
-        System.out.println("School deleted successfully.");
-
-    } else {
-        System.out.println("EIIN not found in database.");
-    }
-}
-
-
- private static void runLottery(Scanner input){
         LotteryDatabase initializer = new LotteryDatabase();
         initializer.initializeDatabase();
+
         FileDatabase quotaChoiceDB =
                 new FileDatabase("quota_choice_extended.db",
-                        Arrays.asList("ChoiceID","StudentID","SeatID","Quota"));
+                        Arrays.asList("ChoiceID","ApplicantID","StudentID","SeatID","Quota"));
 
         FileDatabase seatLotteryDB =
                 new FileDatabase("seat_lottery.db",
@@ -161,7 +168,7 @@ public class MasterAdmin {
 
         FileDatabase resultDB =
                 new FileDatabase("result.db",
-                        Arrays.asList("StudentID","AdmittedSeatID"));
+                        Arrays.asList("ApplicantID","StudentID","AdmittedSeatID"));
 
         FileDatabase applicantDB =
                 new FileDatabase("applicant.db", Arrays.asList());
@@ -169,7 +176,7 @@ public class MasterAdmin {
         FileDatabase schoolAreaDB =
                 new FileDatabase("school_area.db", Arrays.asList());
 
-        System.out.println("Databases Loaded Successfully!");
+        io.println("Databases Loaded Successfully!");
 
         LotteryFunction engine =
                 new LotteryFunction(quotaChoiceDB,
@@ -180,14 +187,8 @@ public class MasterAdmin {
 
         engine.runLottery();
 
-        System.out.println("Lottery Completed Successfully!");
-
-        
-
+        io.println("Lottery Completed Successfully!");
     }
-
-
-
 
     private static void insertAuthorityLogin(String eiin, String password6Digit) {
         Map<String, String> r = new LinkedHashMap<>();
@@ -197,10 +198,12 @@ public class MasterAdmin {
     }
 
     private static void showAllSchools() {
-        System.out.println("\n--- ALL SCHOOLS ---");
+        io.println("\n--- ALL SCHOOLS ---");
         for (Map<String, String> r : DatabaseSetup.schoolAreaDB.readAll()) {
-            System.out.println(
-                    "EIIN: " + r.get("EIIN") +" | Name: " + r.get("Name") +" | Postcode: " + r.get("Postcode")
+            io.println(
+                    "EIIN: " + r.get("EIIN") +
+                    " | Name: " + r.get("Name") +
+                    " | Postcode: " + r.get("Postcode")
             );
         }
     }
