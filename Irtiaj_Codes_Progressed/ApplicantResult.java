@@ -4,6 +4,19 @@ public class ApplicantResult {
 
     private final FileDatabase resultDB;
 
+    private static final String ANSI_CYAN = "\u001B[36m";
+    private static final String ANSI_RESET = "\u001B[0m";
+
+    public ApplicantResult(String studentId) {
+        DatabaseSetup.initAndSeed();
+
+        this.resultDB = new FileDatabase(
+                "result.db",
+                Arrays.asList("ApplicantID", "StudentID", "AdmittedSeatID")
+        );
+
+        showApplicantResult(studentId);
+    }
 
     public ApplicantResult() {
         DatabaseSetup.initAndSeed();
@@ -14,12 +27,38 @@ public class ApplicantResult {
         );
 
         Scanner sc = new Scanner(System.in);
+        // showHeader();
         System.out.print("Enter Student ID (Birth Certificate No): ");
         String studentId = sc.nextLine().trim();
+        clearScreen();
         showApplicantResult(studentId);
     }
 
+    private void clearScreen() {
+        String os = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
+        try {
+            if (os.contains("win")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                System.out.print("\u001b[H\u001b[2J\u001b[3J");
+                System.out.flush();
+            }
+            return;
+        } catch (Exception ignored) {
+        }
+
+        System.out.print("\u001b[H\u001b[2J\u001b[3J");
+        System.out.flush();
+    }
+
+    // private void showHeader() {
+    //     System.out.println(ANSI_CYAN + "==========================================" + ANSI_RESET);
+    //     System.out.println(ANSI_CYAN + "      SCHOOL ADMISSION PORTAL" + ANSI_RESET);
+    //     System.out.println(ANSI_CYAN + "==========================================" + ANSI_RESET);
+    // }
+
     private void showApplicantResult(String studentId) {
+        // showHeader();
         if (studentId == null || studentId.trim().isEmpty()) {
             System.out.println("Student ID cannot be empty.");
             return;
@@ -36,8 +75,8 @@ public class ApplicantResult {
         String applicantId = resultRow.get("ApplicantID");
         String seatId = resultRow.get("AdmittedSeatID");
 
-        if (seatId == null || seatId.isEmpty() || "WAITING".equals(seatId)) {
-            System.out.println("You didn't get chance this time. Better luck next time.");
+        if (seatId == null || seatId.isEmpty()) {
+            System.out.println("Student is not admitted (SeatID missing).");
             return;
         }
 
@@ -47,6 +86,9 @@ public class ApplicantResult {
                 "Name"
         );
 
+        if (studentName == null || studentName.isEmpty()) {
+            studentName = "(Name not found in student_info.db)";
+        }
 
         String eiin = DatabaseSetup.schoolInfoDB.getValueByPrimaryKey(
                 "SeatID",
@@ -54,6 +96,10 @@ public class ApplicantResult {
                 "EIIN"
         );
 
+        if (eiin == null || eiin.isEmpty()) {
+            System.out.println("SeatID found, but EIIN not found for SeatID: " + seatId);
+            return;
+        }
 
         String schoolName = DatabaseSetup.schoolAreaDB.getValueByPrimaryKey(
                 "EIIN",
@@ -61,18 +107,15 @@ public class ApplicantResult {
                 "Name"
         );
 
-        String Shift = DatabaseSetup.schoolInfoDB.getValueByPrimaryKey(
-                "SeatID",
-                seatId,
-                "Shift"
-        );
+        if (schoolName == null || schoolName.isEmpty()) {
+            schoolName = "(School name not found in schoolarea.db)";
+        }
 
         System.out.println("\n#### APPLICANT RESULT ####");
         System.out.println("1. Applicant ID          : " + applicantId);
         System.out.println("2. Student ID            : " + studentId);
         System.out.println("3. Name of the student   : " + studentName);
         System.out.println("4. Admitted school name  : " + schoolName);
-        System.out.println("5. Admitted Shift        : " + Shift);
         System.out.println("############################\n");
     }
 }
