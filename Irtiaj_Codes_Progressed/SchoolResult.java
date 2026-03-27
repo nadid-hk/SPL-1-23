@@ -5,6 +5,9 @@ public class SchoolResult {
     private final FileDatabase resultDB;
     private final String eiin;
 
+    private static final String ANSI_CYAN = "\u001B[36m";
+    private static final String ANSI_RESET = "\u001B[0m";
+
     public SchoolResult(String eiin) {
         DatabaseSetup.initAndSeed();
 
@@ -14,6 +17,15 @@ public class SchoolResult {
         );
         this.eiin = eiin == null ? "" : eiin.trim();
     }
+
+    // private void showHeader(String schoolName) {
+    //     System.out.println(ANSI_CYAN + "==========================================" + ANSI_RESET);
+    //     System.out.println(ANSI_CYAN + "      SCHOOL AUTHORITY PORTAL" + ANSI_RESET);
+    //     System.out.println(ANSI_CYAN + "==========================================" + ANSI_RESET);
+    //     if (schoolName != null && !schoolName.trim().isEmpty()) {
+    //         System.out.println("School: " + schoolName);
+    //     }
+    // }
 
     public void showSchoolWiseResult() {
         if (eiin.isEmpty()) {
@@ -37,7 +49,8 @@ public class SchoolResult {
             }
         }
 
-        System.out.println("\n######## SCHOOL RESULT ########");
+        // showHeader(schoolName);
+        System.out.println("######## SCHOOL RESULT ########");
         System.out.println("School Name : " + schoolName);
         System.out.println("EIIN        : " + eiin);
 
