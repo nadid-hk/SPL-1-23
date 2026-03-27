@@ -90,7 +90,7 @@ public class ApplicantMenu {
 
     private void showHeader() {
         io.println(ANSI_CYAN + "==========================================" + ANSI_RESET);
-        io.println(ANSI_CYAN + "      SCHOOL ADMISSION PORTAL" + ANSI_RESET);
+        io.println(ANSI_CYAN + "         SCHOOL ADMISSION PORTAL" + ANSI_RESET);
         io.println(ANSI_CYAN + "==========================================" + ANSI_RESET);
         io.println("Type \\b during any input to return to this menu.");
     }
