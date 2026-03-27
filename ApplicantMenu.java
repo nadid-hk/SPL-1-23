@@ -51,7 +51,7 @@ public class ApplicantMenu {
                             io.println("Result module is not ready yet!! ");
                             io.hr();
                         } else {
-                            workflow.showResultMenu();
+                            new ApplicantResult();
                         }
                         break;
                     case 6:
