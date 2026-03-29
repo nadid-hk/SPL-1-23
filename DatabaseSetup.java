@@ -583,7 +583,7 @@ insertNid("19910000000000001", "MD. KAMAL HASAN");
 }
 
         
-// BIRTH CERTIFICATE DATABASE INSERTION 
+// BIRTH CERTIFICATE DATABASE INSERTION FROM ChatGPT
 if (birthDB.readAll().isEmpty()) {
     insertBirth("BC3001", "RAHIM HASAN", "24-07-2017", "MD. KAMAL HASAN", "FARHANA AKTER", "MALE", "1000");
     insertBirth("BC3002", "KAMRUN NAHAR", "11-02-2016", "MD. SELIM UDDIN", "RUKEYA BEGUM", "FEMALE", "1217");
@@ -837,68 +837,217 @@ if (birthDB.readAll().isEmpty()) {
 
     //     SEAT INFO
         if (schoolInfoDB.readAll().isEmpty()) {
-            addSeat("108001", 1, "MORNING", "BOTH", 60);
-            addSeat("108001", 1, "DAY",     "BOTH", 55);
-            addSeat("108001", 6, "MORNING", "BOTH", 30);
-            addSeat("108001", 9, "DAY",     "BOTH", 22);
+            addSeat("108001", 1, "MORNING", "BOTH", 10);
+            addSeat("108001", 1, "DAY",     "BOTH", 10);
+            addSeat("108001", 6, "MORNING", "BOTH", 10);
+            addSeat("108001", 9, "DAY",     "BOTH", 10);
 
-            addSeat("108002", 1, "MORNING", "BOTH", 75);
-            addSeat("108002", 1, "DAY",     "BOTH", 70);
-            addSeat("108002", 6, "MORNING", "BOTH", 25);
-            addSeat("108002", 9, "DAY",     "BOTH", 18);
+            addSeat("108002", 1, "MORNING", "BOTH", 10);
+            addSeat("108002", 1, "DAY",     "BOTH", 10);
+            addSeat("108002", 6, "MORNING", "BOTH", 10);
+            addSeat("108002", 9, "DAY",     "BOTH", 10);
 
-            addSeat("108003", 1, "MORNING", "FEMALE", 55);
-            addSeat("108003", 1, "DAY",     "FEMALE", 50);
-            addSeat("108003", 6, "MORNING", "FEMALE", 20);
-            addSeat("108003", 9, "DAY",     "FEMALE", 15);
+            addSeat("108003", 1, "MORNING", "FEMALE", 10);
+            addSeat("108003", 1, "DAY",     "FEMALE", 10);
+            addSeat("108003", 6, "MORNING", "FEMALE", 10);
+            addSeat("108003", 9, "DAY",     "FEMALE", 10);
 
-            addSeat("108004", 1, "DAY", "BOTH", 25);
-            addSeat("108004", 6, "DAY", "BOTH", 20);
-            addSeat("108004", 9, "DAY", "BOTH", 18);
+            addSeat("108004", 1, "DAY", "BOTH", 10);
+            addSeat("108004", 6, "DAY", "BOTH", 10);
+            addSeat("108004", 9, "DAY", "BOTH", 10);
 
-            addSeat("108101", 3, "MORNING", "MALE", 70);
-            addSeat("108101", 3, "DAY",     "MALE", 65);
-            addSeat("108101", 6, "MORNING", "MALE", 55);
-            addSeat("108101", 9, "DAY",     "MALE", 12);
+            addSeat("108101", 3, "MORNING", "MALE", 10);
+            addSeat("108101", 3, "DAY",     "MALE", 10);
+            addSeat("108101", 6, "MORNING", "MALE", 10);
+            addSeat("108101", 9, "DAY",     "MALE", 10);
 
-            addSeat("108102", 3, "MORNING", "FEMALE", 60);
-            addSeat("108102", 3, "DAY",     "FEMALE", 58);
-            addSeat("108102", 6, "MORNING", "FEMALE", 40);
+            addSeat("108102", 3, "MORNING", "FEMALE", 10);
+            addSeat("108102", 3, "DAY",     "FEMALE", 10);
+            addSeat("108102", 6, "MORNING", "FEMALE", 10);
             addSeat("108102", 9, "DAY",     "FEMALE", 10);
 
-            addSeat("108103", 1, "MORNING", "BOTH", 90);
-            addSeat("108103", 1, "DAY",     "BOTH", 85);
-            addSeat("108103", 6, "MORNING", "BOTH", 60);
-            addSeat("108103", 9, "DAY",     "BOTH", 50);
+            addSeat("108103", 1, "MORNING", "BOTH", 10);
+            addSeat("108103", 1, "DAY",     "BOTH", 10);
+            addSeat("108103", 6, "MORNING", "BOTH", 10);
+            addSeat("108103", 9, "DAY",     "BOTH", 10);
 
-            addSeat("108104", 1, "MORNING", "BOTH", 45);
-            addSeat("108104", 6, "DAY",     "BOTH", 40);
+            addSeat("108104", 1, "MORNING", "BOTH", 10);
+            addSeat("108104", 6, "DAY",     "BOTH", 10);
 
-            addSeat("108105", 1, "MORNING", "BOTH", 35);
-            addSeat("108105", 6, "DAY",     "BOTH", 30);
+            addSeat("108105", 1, "MORNING", "BOTH", 10);
+            addSeat("108105", 6, "DAY",     "BOTH", 10);
 
-            addSeat("108201", 1, "MORNING", "FEMALE", 120);
-            addSeat("108201", 1, "DAY",     "FEMALE", 110);
-            addSeat("108201", 6, "MORNING", "FEMALE", 70);
-            addSeat("108201", 9, "DAY",     "FEMALE", 55);
+            addSeat("108201", 1, "MORNING", "FEMALE", 10);
+            addSeat("108201", 1, "DAY",     "FEMALE", 10);
+            addSeat("108201", 6, "MORNING", "FEMALE", 10);
+            addSeat("108201", 9, "DAY",     "FEMALE", 10);
 
-            addSeat("108202", 1, "MORNING", "BOTH", 70);
-            addSeat("108202", 1, "DAY",     "BOTH", 65);
-            addSeat("108202", 6, "MORNING", "BOTH", 55);
-            addSeat("108202", 9, "DAY",     "BOTH", 50);
+            addSeat("108202", 1, "MORNING", "BOTH", 10);
+            addSeat("108202", 1, "DAY",     "BOTH", 10);
+            addSeat("108202", 6, "MORNING", "BOTH", 10);
+            addSeat("108202", 9, "DAY",     "BOTH", 10);
 
-            addSeat("108203", 1, "MORNING", "BOTH", 40);
-            addSeat("108203", 6, "DAY",     "BOTH", 38);
+            addSeat("108203", 1, "MORNING", "BOTH", 10);
+            addSeat("108203", 6, "DAY",     "BOTH", 10);
 
-            addSeat("108204", 1, "MORNING", "BOTH", 45);
-            addSeat("108204", 6, "DAY",     "BOTH", 42);
+            addSeat("108204", 1, "MORNING", "BOTH", 10);
+            addSeat("108204", 6, "DAY",     "BOTH", 10);
 
-            addSeat("108205", 1, "MORNING", "BOTH", 35);
-            addSeat("108205", 6, "DAY",     "BOTH", 30);
+            addSeat("108205", 1, "MORNING", "BOTH", 10);
+            addSeat("108205", 6, "DAY",     "BOTH", 10);
         }
+
+        // CHANGE START: additive seed coverage (safe on non-empty databases).
+        ensureBangladeshPostcodeCoverage();
+        ensureDhakaThanaSchoolCoverage();
+        // CHANGE END
 
         // DO NOT seed applicantDB or studentInfoDB (must stay empty)
     }
+
+    // CHANGE START: additive seed helpers for broader postcode + school coverage.
+    private static void ensureBangladeshPostcodeCoverage() {
+        // 8 divisions (minimal one district row for non-Dhaka divisions)
+        ensurePost("8200", "BARISHAL", "BARISHAL", "SADAR");
+        ensurePost("4000", "CHATTOGRAM", "CHATTOGRAM", "SADAR");
+        ensurePost("9100", "KHULNA", "KHULNA", "SADAR");
+        ensurePost("2200", "MYMENSINGH", "MYMENSINGH", "SADAR");
+        ensurePost("6000", "RAJSHAHI", "RAJSHAHI", "SADAR");
+        ensurePost("5400", "RANGPUR", "RANGPUR", "SADAR");
+        ensurePost("3100", "SYLHET", "SYLHET", "SADAR");
+
+        // Dhaka division with district coverage
+        ensurePost("1000", "DHAKA", "DHAKA", "MOTIJHEEL");
+        ensurePost("1217", "DHAKA", "DHAKA", "RAMNA");
+        ensurePost("1206", "DHAKA", "DHAKA", "CANTONMENT");
+        ensurePost("7800", "FARIDPUR", "DHAKA", "SADAR");
+        ensurePost("1700", "GAZIPUR", "DHAKA", "SADAR");
+        ensurePost("8100", "GOPALGANJ", "DHAKA", "SADAR");
+        ensurePost("2300", "KISHOREGANJ", "DHAKA", "SADAR");
+        ensurePost("7900", "MADARIPUR", "DHAKA", "SADAR");
+        ensurePost("1800", "MANIKGANJ", "DHAKA", "SADAR");
+        ensurePost("1500", "MUNSHIGANJ", "DHAKA", "SADAR");
+        ensurePost("1400", "NARAYANGANJ", "DHAKA", "SADAR");
+        ensurePost("1600", "NARSINGDI", "DHAKA", "SADAR");
+        ensurePost("7700", "RAJBARI", "DHAKA", "SADAR");
+        ensurePost("8000", "SHARIATPUR", "DHAKA", "SADAR");
+        ensurePost("1900", "TANGAIL", "DHAKA", "SADAR");
+
+        // Dhaka district thanas (expanded coverage)
+        ensurePost("1207", "DHAKA", "DHAKA", "TEJGAON");
+        ensurePost("1212", "DHAKA", "DHAKA", "TEJGAON INDUSTRIAL AREA");
+        ensurePost("1215", "DHAKA", "DHAKA", "MOHAMMADPUR");
+        ensurePost("1205", "DHAKA", "DHAKA", "SHER-E-BANGLA NAGAR");
+        ensurePost("1216", "DHAKA", "DHAKA", "MIRPUR");
+        ensurePost("1213", "DHAKA", "DHAKA", "GULSHAN");
+        ensurePost("1214", "DHAKA", "DHAKA", "BANANI");
+        ensurePost("1219", "DHAKA", "DHAKA", "BADDA");
+        ensurePost("1229", "DHAKA", "DHAKA", "KHILKHET");
+        ensurePost("1222", "DHAKA", "DHAKA", "BASHUNDHARA");
+        ensurePost("1225", "DHAKA", "DHAKA", "BARIDHARA");
+        ensurePost("1210", "DHAKA", "DHAKA", "DHANMONDI");
+        ensurePost("1209", "DHAKA", "DHAKA", "LALBAGH");
+        ensurePost("1203", "DHAKA", "DHAKA", "SUTRAPUR");
+        ensurePost("1204", "DHAKA", "DHAKA", "BANSHAL");
+        ensurePost("1208", "DHAKA", "DHAKA", "SHAHBAG");
+        ensurePost("1230", "DHAKA", "DHAKA", "SHYAMPUR");
+        ensurePost("1236", "DHAKA", "DHAKA", "KADAMTALI");
+        ensurePost("1233", "DHAKA", "DHAKA", "JATRABARI");
+        ensurePost("1232", "DHAKA", "DHAKA", "DEMRA");
+        ensurePost("1211", "DHAKA", "DHAKA", "PALTAN");
+        ensurePost("1202", "DHAKA", "DHAKA", "WARI");
+        ensurePost("1235", "DHAKA", "DHAKA", "GENDARIA");
+        ensurePost("1234", "DHAKA", "DHAKA", "KOTWALI");
+        ensurePost("1340", "DHAKA", "DHAKA", "KERANIGANJ");
+        ensurePost("1310", "DHAKA", "DHAKA", "NAWABGANJ");
+        ensurePost("1330", "DHAKA", "DHAKA", "DOHAR");
+        ensurePost("1341", "DHAKA", "DHAKA", "SAVAR");
+        ensurePost("1350", "DHAKA", "DHAKA", "DHAMRAI");
+        ensurePost("1349", "DHAKA", "DHAKA", "ASHULIA");
+        ensurePost("1220", "DHAKA", "DHAKA", "UTTARA");
+        ensurePost("1231", "DHAKA", "DHAKA", "TURAG");
+        ensurePost("1221", "DHAKA", "DHAKA", "DAKSHINKHAN");
+        ensurePost("1223", "DHAKA", "DHAKA", "UTTARKHAN");
+        ensurePost("1239", "DHAKA", "DHAKA", "DARUS SALAM");
+        ensurePost("1240", "DHAKA", "DHAKA", "PALLABI");
+        ensurePost("1241", "DHAKA", "DHAKA", "KAFRUL");
+        ensurePost("1242", "DHAKA", "DHAKA", "SHAHJAHANPUR");
+        ensurePost("1243", "DHAKA", "DHAKA", "MUGDA");
+        ensurePost("1244", "DHAKA", "DHAKA", "SABUJBAGH");
+        ensurePost("1245", "DHAKA", "DHAKA", "KALABAGAN");
+        ensurePost("1246", "DHAKA", "DHAKA", "CHAWK BAZAR");
+        ensurePost("1247", "DHAKA", "DHAKA", "BIMANBANDAR");
+        ensurePost("1248", "DHAKA", "DHAKA", "SHAH ALI");
+    }
+
+    private static void ensureDhakaThanaSchoolCoverage() {
+        // New schools inserted for vacant-seat prompt examples (Thana: MOTIJHEEL / RAMNA / CANTONMENT)
+        ensureSchoolArea("108106", "ARAMBAGH HIGH SCHOOL", "1000");                       // MOTIJHEEL
+        ensureSchoolArea("108107", "IDEAL SCHOOL & COLLEGE, MOTIJHEEL", "1000");          // MOTIJHEEL
+        ensureSchoolArea("108108", "DHOLAIPAR HIGH SCHOOL", "1000");                       // MOTIJHEEL
+        ensureSchoolArea("108206", "UDAYAN HIGHER SECONDARY SCHOOL", "1217");              // RAMNA
+        ensureSchoolArea("108207", "SIDDESHWARI GIRLS' HIGH SCHOOL", "1217");              // RAMNA
+        ensureSchoolArea("108005", "SHAHEEN SCHOOL DHAKA", "1206");                        // CANTONMENT
+        ensureSchoolArea("108006", "SOS HERMANN GMEINER COLLEGE DHAKA", "1206");           // CANTONMENT
+
+        ensureAuthorityLoginEntry("108106", "504106");
+        ensureAuthorityLoginEntry("108107", "504107");
+        ensureAuthorityLoginEntry("108108", "504108");
+        ensureAuthorityLoginEntry("108206", "504206");
+        ensureAuthorityLoginEntry("108207", "504207");
+        ensureAuthorityLoginEntry("108005", "504005");
+        ensureAuthorityLoginEntry("108006", "504006");
+
+        ensureSeat("108106", 3, "DAY", "BOTH", 10);
+        ensureSeat("108106", 6, "DAY", "BOTH", 10);
+        ensureSeat("108106", 9, "DAY", "BOTH", 10);
+        ensureSeat("108107", 3, "MORNING", "BOTH", 10);
+        ensureSeat("108107", 6, "MORNING", "BOTH", 10);
+        ensureSeat("108107", 9, "DAY", "BOTH", 10);
+        ensureSeat("108108", 3, "DAY", "BOTH", 10);
+        ensureSeat("108108", 6, "DAY", "BOTH", 10);
+        ensureSeat("108108", 9, "DAY", "BOTH", 10);
+        ensureSeat("108206", 3, "DAY", "BOTH", 10);
+        ensureSeat("108206", 6, "DAY", "BOTH", 10);
+        ensureSeat("108206", 9, "DAY", "BOTH", 10);
+        ensureSeat("108207", 3, "DAY", "FEMALE", 10);
+        ensureSeat("108207", 6, "DAY", "FEMALE", 10);
+        ensureSeat("108207", 9, "DAY", "FEMALE", 10);
+        ensureSeat("108005", 3, "MORNING", "BOTH", 10);
+        ensureSeat("108005", 6, "MORNING", "BOTH", 10);
+        ensureSeat("108005", 9, "DAY", "BOTH", 10);
+        ensureSeat("108006", 3, "DAY", "BOTH", 10);
+        ensureSeat("108006", 6, "DAY", "BOTH", 10);
+        ensureSeat("108006", 9, "DAY", "BOTH", 10);
+    }
+
+    private static void ensurePost(String pc, String district, String division, String thana) {
+        if (postcodeDB.find("PostCode", pc) != null) return;
+        insertPost(pc, district, division, thana);
+    }
+
+    private static void ensureSchoolArea(String eiin, String name, String postcode) {
+        if (schoolAreaDB.find("EIIN", eiin) != null) return;
+        insertSchoolArea(eiin, name, postcode);
+    }
+
+    private static void ensureAuthorityLoginEntry(String eiin, String pass) {
+        if (authorityLoginDB.find("EIIN", eiin) != null) return;
+        insertAuthorityLogin(eiin, pass);
+    }
+
+    private static void ensureSeat(String eiin, int classNo, String shift, String seatGender, int seatAvail) {
+        for (Map<String, String> row : schoolInfoDB.readAll()) {
+            if (eiin.equals(row.get("EIIN"))
+                    && String.valueOf(classNo).equals(row.get("Class"))
+                    && shift.equals(row.get("Shift"))
+                    && seatGender.equals(row.get("SeatGender"))) {
+                return;
+            }
+        }
+        addSeat(eiin, classNo, shift, seatGender, seatAvail);
+    }
+    // CHANGE END
 
     // Insert Helpers 
 
@@ -990,8 +1139,4 @@ private static void insertAuthorityLogin(String eiin, String password6Digit) {
     authorityLoginDB.insert(r);
 }
 }
-
-
-
-
 
